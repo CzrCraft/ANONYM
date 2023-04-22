@@ -1,0 +1,5 @@
+user:api_access
+password:H1Gv15HQfkm9MSkVf1rLoHpYfYD58OwUzrREUx0gD8BLGBSQsT00WPC5eMAxzu9igo9P95bFMz8iQ253OjHm3ZhTdRsSaQF9EkV2TU8W4wrs6MI6XGGKsRaoOYvpMpqyvMYZ36iMe6maOJjK0cA8LIwRxrPrRtguNkfnPVyeLB7sKH6kmTT8XUU4ONGe74CCGJapmZQAN29v3YNo2mi8waSGrkEXv3vvjiRDEOYtPPn4OjJxfCQDk6FrCLY9HyZa
+
+user: czr_user
+password: 3dsDyXm6b3ggfXrocF1O32dsgesrzdawd@das@F@ASF@###$%IAHFjngiaK@I##xx
