@@ -1,0 +1,25 @@
+{
+    "printify":{
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzN2Q0YmQzMDM1ZmUxMWU5YTgwM2FiN2VlYjNjY2M5NyIsImp0aSI6IjVlNTZhMzIwZTliZjUxNTJmZGI3YzA3Njc2MWNiNmRmOGMzYmVlOGNlZDZiZGM4NmQxYjA0YjdjMmQwOTY2NGVkYzlhYjU2ZDBjNTFjNTNmIiwiaWF0IjoxNjgyMDIzNjc4LjMyNDg5MSwibmJmIjoxNjgyMDIzNjc4LjMyNDg5NCwiZXhwIjoxNzEzNjQ2MDc4LjMyMTA3NSwic3ViIjoiMTI3NzAwNDYiLCJzY29wZXMiOlsic2hvcHMubWFuYWdlIiwic2hvcHMucmVhZCIsImNhdGFsb2cucmVhZCIsIm9yZGVycy5yZWFkIiwib3JkZXJzLndyaXRlIiwicHJvZHVjdHMucmVhZCIsInByb2R1Y3RzLndyaXRlIiwid2ViaG9va3MucmVhZCIsIndlYmhvb2tzLndyaXRlIiwidXBsb2Fkcy5yZWFkIiwidXBsb2Fkcy53cml0ZSIsInByaW50X3Byb3ZpZGVycy5yZWFkIl19.AlRzcmrs7-7h1OfsNnq20ZE0zCHZkF7evyeYFQHd6l3FW3cAjt3Uqw1BJJRYrVioEwvyOCFtMZbPvdNFUVU",
+        "store_id": "8438513"
+    },
+    "server_settings":{
+        "port": 42069,
+        "ssl_passphrase": "niggers",
+        "domain": "stylr.go.ro",
+        "database_settings": {
+            "ip": "127.0.0.1",
+            "port": 27017,
+            "name": "Stylr",
+            "user": "api_user",
+            "password": "H1Gv15HQfkm9MSkVf1rLoHpYfYD58OwUzrREUx0gD8BLGBSQsT00WPC5eMAxzu9igo9P95bFMz8iQ253OjHm3ZhTdRsSaQF9EkV2TU8W4wrs6MI6XGGKsRaoOYvpMpqyvMYZ36iMe6maOJjK0cA8LIwRxrPrRtguNkfnPVyeLB7sKH6kmTT8XUU4ONGe74CCGJapmZQAN29v3YNo2mi8waSGrkEXv3vvjiRDEOYtPPn4OjJxfCQDk6FrCLY9HyZa",
+            "verify_ssl_certificate": false
+        },
+        "cd_proxy_settings": {
+            "ip": "127.0.0.1",
+            "port": 25691,
+            "key": "D/Z2TwyTy15s40ScPgj/x/k3fe3t6Hi7oe?coBp0kyb6dVET5TfhTHE3qZA=7osXKOUGnMy5w3DqXiH!PRiNXiswe95P3OF3j9UQukK9Vrs/D9V/9Y0V7Q62iHf/G8NTkEbrg4o!sYQbSa?kmV!Yi3bdqqkY3luewX7dtT?PE7Tv-EiY3udYMMbWxb6dsNJI7QTXTusIQiyVwgVDkEkVz2JkdZjfxR0QPbL7KQpucQ95XYRadeK=Pv8I0nweqe24uJVV=yDf?GufX-zM/eEx2e83=QvEctQtJGtFRS-umGbsZzg3ujOdQjzi1W-RuqWXarRkp!YNVU7Rg!KTPs0qw3qPNWRUDXR=5GDbvaiW5Uu54I?LRYNii611RlKyylcLwKMUTZ8AIoa?uF2I=RO0XfejE?/AQ=ZiZTybLlUDyD=1rZ=9SBN8TIYJpRyx4BbMLbv8JB2a9p6O3VySNysY259ouMgr2QxAne4dO3NilO5ahmzJLmQvzhufVUU6es!=aKa-pfIyh3rkaeeBPbwEdLF3pZOd9fcs=Z20oNHBfMGJ1rLs-8/eH0fL8VrydY39EXkcNyMOF!gHp46b5v47A6RLePzlgKfnWxiYefIf8KZuOueIxsvrJ!hdu0kIdcuHV1cubg8PON-vJmTDAcqNmphZLx6b3CgUZt3hgSNFeT/3CsFAItA?1SPfc3c7y9CiNKVOwy7Xlu5AKr6ZHu628?17SxxoEFxvRYmFE5bIDsY2IUjgeM4edqTcH!jonKK1eyJcla!/?F=BWyF6GUsZ!JcRb=rZ6vV1pd-1h/6qwddO2R4uQpqXYxDXh=CrjdGQcuZ-yu=Tx-S/zATpbKw6=6WzFS/hLfY6=38jYQAWaTxN4U45AumFLMaGr/tjMiWa/lo1ejnescA6G7iJ!0By=zfmwoHebWGRnYXgKGzg75f7c59SaxrVLwUTFWSx7OEltEPhjOnlJ=/qTLAEZ7=Zqfi2J1sGkBCM2EviSoguIkO4OCN/e23zN8srbiekYZkULGYQGwj/9HZZuna8C7GGbx//SNWyKXlHH09wTH65N97djCu/1Yg/JXQM?jnMqHHfGCEcHDc-yIMVnBTYB9y0!bqgCXt86OuX2S?DNMf/b1nIdtFnQ8vGQcJVuXGVV7UXRVremxquw6YeR3HTXkMOCMZ-9hi0FzseAsy8m9vdns3eN/2V/fNO/??739Ep/?RIFKPf=a4kEn84NY8n6c6tA6g/U4rkXBYyq0mQz1IN3L/UaBpgOIekks/A9pB5DVK1Du!/3xe2cU1YLd5pNm-X5=ikwNxtIq8I03skNl/ZaKqUCWqrS=r/uGJ9?B/S9efvno=DJQzCIugZdEDJek9DAd6R!1Ok0F/D51NJdP-pA367I6xu!ig7VsfH!erhgtent0!8KXdbngBgAgxwwcHNj=RkPj1VLRCHFZUMxSTcBgqgKG7YiXm?FVcnTOMGsK7w/qvu79hSMfFefk1XvaVUh=vA-nROp--H4qQfFeqBDwDyNtVNr-1ak!rUPZvLl7XOPHD9hty2EJblRcsn0y=VX2VCYbMrdjJahJvK9HPks9qv9lnZGsqK8Q=SIMB5qEoQrDU2cyIPM=WiVBQS2c9yXcgjxjx43/-t2wDaKC?8-eQpDeF1GRqngapotn705EaycQN/!Zn6AYpULGA?Syp1f9eciexP0UegIUGD8X2Y1zpae9ohj4jKQPq?riMwa=!LurOE?HAqgot9u-Yh/vsdpwNrn5!sSnQ1lBM6W3FR/GNcTnYAosvCd!chresijUVeTLL2qC1IJxXw6OR?LkrQnA5hrCNDfFfGebLACCBslvdM6?LC6iS=7Fa!0A4wEozSbh4pCWTd7!Hmw3C=JiJ5atML3XUYjg536Cg8OodqNbb/LimZ7LNyqcdw8-CJFA4mRzcjP5adK8Hs?tztzeBEO4tXK!?GRI7hgn0p=D9sYwOa0DupUCuPN/z=d6IixbKbuVSxW567nweO?wEsxvqu81lHx0Fi8fhlWUK8EyCQJyFioCWyrh5y/8=et1z86g48"
+        }
+    }
+
+}
