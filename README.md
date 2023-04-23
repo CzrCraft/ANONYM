@@ -12,10 +12,11 @@ Requirements:
   * **MongoDB Enterprise edition**
   * **Node JS**
   
-Before running run the command "npm install" to install all the dependencies.
+Before running the api run the command "npm install" to install all the dependencies.
+Api should be configured in the config.json file, and port forwarding should be allowed if you were to host the api to the public.
 
 # APP
-It's app is lightweight, and fast. Our only concern is to make this as straightforward as possible.
+It's app is lightweight, and fast. Our only concern is to make this as straightforward as possible. It has a simple and clean UI.
 
 
 Requirements:
