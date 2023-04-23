@@ -1,6 +1,8 @@
 # Stylr
 Numele echipei: ANONYM
+
 Scoala: Scoala Gimnaziala Nr. 49
+
 All in one platform for making custom clothing.
 # API
 It's API is secured with locally signed SSL Certificates. The users are securely stored in a MongoDB Database with a ssl certificate generated and password protection.
