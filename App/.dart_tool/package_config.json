@@ -2,6 +2,12 @@
   "configVersion": 2,
   "packages": [
     {
+      "name": "animated_text_kit",
+      "rootUri": "file:///C:/Users/czrcr/AppData/Local/Pub/Cache/hosted/pub.dev/animated_text_kit-4.2.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "async",
       "rootUri": "file:///C:/Users/czrcr/AppData/Local/Pub/Cache/hosted/pub.dev/async-2.10.0",
       "packageUri": "lib/",
@@ -46,6 +52,12 @@
     {
       "name": "flutter",
       "rootUri": "file:///C:/src/flutter/packages/flutter",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "flutter_animate",
+      "rootUri": "file:///C:/Users/czrcr/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_animate-4.1.1+1",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
@@ -146,13 +158,13 @@
       "languageVersion": "2.14"
     },
     {
-      "name": "stylr",
+      "name": "Stylr",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2023-04-22T14:43:00.829341Z",
+  "generated": "2023-04-23T13:34:07.858562Z",
   "generator": "pub",
   "generatorVersion": "2.19.4"
 }
