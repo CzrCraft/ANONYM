@@ -1,0 +1,10 @@
+C:/Users/czrcr/Desktop/Stylr/Stylr/App/build/windows/CMakeFiles/INSTALL.dir
+C:/Users/czrcr/Desktop/Stylr/Stylr/App/build/windows/CMakeFiles/ALL_BUILD.dir
+C:/Users/czrcr/Desktop/Stylr/Stylr/App/build/windows/CMakeFiles/ZERO_CHECK.dir
+C:/Users/czrcr/Desktop/Stylr/Stylr/App/build/windows/flutter/CMakeFiles/flutter_wrapper_plugin.dir
+C:/Users/czrcr/Desktop/Stylr/Stylr/App/build/windows/flutter/CMakeFiles/flutter_wrapper_app.dir
+C:/Users/czrcr/Desktop/Stylr/Stylr/App/build/windows/flutter/CMakeFiles/flutter_assemble.dir
+C:/Users/czrcr/Desktop/Stylr/Stylr/App/build/windows/flutter/CMakeFiles/INSTALL.dir
+C:/Users/czrcr/Desktop/Stylr/Stylr/App/build/windows/runner/CMakeFiles/stylr.dir
+C:/Users/czrcr/Desktop/Stylr/Stylr/App/build/windows/runner/CMakeFiles/INSTALL.dir
+C:/Users/czrcr/Desktop/Stylr/Stylr/App/build/windows/runner/CMakeFiles/ALL_BUILD.dir
