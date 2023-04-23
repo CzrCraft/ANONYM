@@ -1,8 +1,9 @@
-// ignore_for_file: file_names, sort_child_properties_last
+// ignore_for_file: file_names, sort_child_properties_last, unnecessary_new
 
 import 'package:flutter/material.dart';
 import 'package:Stylr/main.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:Stylr/loginPage.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({super.key});
@@ -24,7 +25,7 @@ class _StartPageState extends State<StartPage> {
           children: [
             AnimatedTextKit(
               animatedTexts: [
-                TyperAnimatedText("Welcome back",
+                TyperAnimatedText("Welcome back!",
                     speed: const Duration(milliseconds: 45),
                     textStyle: TextStyle(
                         fontSize: 30.0,
@@ -116,13 +117,16 @@ class _StartPageState extends State<StartPage> {
                 child: Container(
                   child: TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, "/login");
+                      // ignore: prefer_const_constructors
+                      Navigator.push(context, animatedRoute(new LoginPage()));
                     },
-                    child: IgnorePointer(child: Text("Yes",
+                    child: IgnorePointer(
+                        child: Text(
+                      "Yes",
                       style: TextStyle(
-                        fontSize: 30.0,
-                        color: secondaryColor,
-                        decoration: TextDecoration.none),
+                          fontSize: 30.0,
+                          color: secondaryColor,
+                          decoration: TextDecoration.none),
                     )),
                   ),
                   decoration: BoxDecoration(
@@ -136,7 +140,8 @@ class _StartPageState extends State<StartPage> {
                   onPressed: () {
                     Navigator.pushNamed(context, "/signup");
                   },
-                  child: IgnorePointer(child: AnimatedTextKit(
+                  child: IgnorePointer(
+                      child: AnimatedTextKit(
                     animatedTexts: [
                       TyperAnimatedText("No",
                           speed: const Duration(milliseconds: 45),
