@@ -1,0 +1,6 @@
+package com.example.stylr
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity() {
+}
