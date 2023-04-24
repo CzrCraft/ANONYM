@@ -1,4 +1,0 @@
-#Mon Apr 24 16:59:11 EEST 2023
-base.0=C\:\\Users\\czrcr\\Desktop\\Stylr\\Stylr\\App\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
-renamed.0=classes.dex
-path.0=classes.dex
