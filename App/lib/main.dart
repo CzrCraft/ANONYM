@@ -3,10 +3,14 @@
 import 'package:Stylr/loginPage.dart';
 import 'package:Stylr/startPage.dart';
 import 'package:flutter/material.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:io';
+import 'dart:convert';
+import 'package:flutter/services.dart';
 GlobalKey RootWidgetKey = GlobalKey();
 Color primaryColor = const Color(0xff272324);
 Color secondaryColor = const Color(0xfffeba57);
+bool debugMode = true; // DEBUG MODE IS ONLY FOR DEVELOPMENT PORPOUSES AND NOT INTENDED TO BE ENABELD IN DEPLYOMENT!
 
 class CircleRevealClipper extends CustomClipper<Path> {
   final center;
@@ -34,7 +38,7 @@ Route animatedRoute(Widget p_widget) {
     pageBuilder: (context, animation, secondaryAnimation) => p_widget,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       var screenSize = MediaQuery.of(context).size;
-      Offset center = Offset(screenSize.width/2, screenSize.height/2);
+      Offset center = Offset(screenSize.width / 2, screenSize.height / 2);
       double beginRadius = 0.0;
       double endRadius = screenSize.height * 1.2;
 
@@ -49,32 +53,20 @@ Route animatedRoute(Widget p_widget) {
     },
   );
 }
-
-// Route animatedRoute(Widget widget) {
-//   return PageRouteBuilder(
-//     pageBuilder: (context, animation, secondaryAnimatn) => widget,
-//     transitionDuration: Duration(milliseconds: 1000),
-//     opaque: false,
-//     barrierDismissible: false,
-//     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-//       var screenSize = MediaQuery.of(context).size;
-//       Offset center = Offset(screenSize.width - 40, screenSize.height - 40);
-//       double beginRadius = 0.0;
-//       double endRadius = screenSize.height * 1.2;
-
-//       var tween = Tween<double>(begin: beginRadius, end: endRadius);
-//       var radiusTweenAnimation = animation.drive(tween);
-
-//       return ClipPath(
-//         clipper:
-//             CircleRevealClipper(radius: radiusTweenAnimation, center: center),
-//         child: child,
-//       );
-//     },
-//   );
-// }
-
-void main() {
+class MyHttpOverrides extends HttpOverrides{
+  @override
+  HttpClient createHttpClient(SecurityContext? context){
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+  }
+}
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if(debugMode){
+    HttpOverrides.global = new MyHttpOverrides();
+    ByteData data = await PlatformAssetBundle().load('assets/ca/lets-encrypt-r3.pem');
+    SecurityContext.defaultContext.setTrustedCertificatesBytes(data.buffer.asUint8List());
+  }
   runApp(RootWidget(key: RootWidgetKey));
 }
 
@@ -89,7 +81,7 @@ class RootWidget extends StatelessWidget {
       initialRoute: "/",
       routes: {
         "/": (context) => const StartPage(),
-        "/login": (context) => const LoginPage(),
+        "/login": (context) => LoginPage(),
       },
     );
   }

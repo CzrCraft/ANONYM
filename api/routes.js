@@ -72,7 +72,7 @@ module.exports = {
         }catch(err){
             console.log(err)
             res.statusCode = 400
-            res.send()
+            res.send("error")
         }
     },
     
