@@ -19,7 +19,7 @@ function doneReading(){
         cert: fs.readFileSync("sslcert/server.crt"),
       },server)
       .listen(port, ()=>{
-        console.log('server is runing at port ' + port)
+        console.log('server is running on port ' + port)
       });
     
     // Create an try point route for the Express app listening on port 4000.
@@ -32,7 +32,7 @@ function doneReading(){
                 configs["server_settings"]["database_settings"]["name"],
                 configs["server_settings"]["database_settings"]["verify_ssl_certificate"]);
     server.get('/api', (req,res)=>{res.send("Base dir of iStyleAPI")})
-    server.get("/api/user/create_user", (req,res) => {routes.create_user(req, res)})
+    server.get("/api/user/signup", (req,res) => {routes.create_user(req, res)})
     server.get("/api/user/login", (req,res) => {routes.login(req, res)})
     server.get("/api/order", (req,res) => {routes.place_order(req, res)})
     server.get("/api/order/upload", (req,res) => {routes.upload(req, res)})

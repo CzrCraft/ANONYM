@@ -1,9 +1,11 @@
 // ignore_for_file: file_names, sort_child_properties_last, unnecessary_new
 
+import 'package:Stylr/signupPage.dart';
 import 'package:flutter/material.dart';
 import 'package:Stylr/main.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:Stylr/loginPage.dart';
+import 'utilities.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({super.key});
@@ -138,7 +140,7 @@ class _StartPageState extends State<StartPage> {
               Container(
                 child: TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, "/signup");
+                    Navigator.push(context, animatedRoute(new SignupPage()));
                   },
                   child: IgnorePointer(
                       child: AnimatedTextKit(
