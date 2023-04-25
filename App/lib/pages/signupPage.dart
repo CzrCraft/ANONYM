@@ -319,7 +319,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
 //that are acquired later
 //so i use this seperate local widget that i declare the Future inside its initState() function
 //avoiding this weird bug.
-
+//TODO: add error messages for signing up
 class _SignUp extends StatefulWidget {
   final String username;
   final String password;

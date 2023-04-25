@@ -17,6 +17,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   @override
+  void initState() {
+    super.initState();
+    Navigator.pushAndRemoveUntil(context, animatedRoute(HomePage()), (route) => false);
+  }
+
   Widget build(BuildContext context) {
     return Container(color: secondaryColor);
   }
