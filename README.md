@@ -5,9 +5,9 @@ School: Scoala Gimnaziala Nr. 49
 
 Teammates: Constantin Cezar Stefan, Matei Dan Mirenu, Alexandru Gheorghe Curmei
 
-All in one platform for making custom clothing.
+All in one platform for making and sharing custom clothing.
 # API
-It's API is secured with locally signed SSL Certificates. The users are securely stored in a MongoDB Database with a ssl certificate generated and password protection.
+It's API is secured with locally signed SSL Certificates. The users are securely stored in a MongoDB Database with an ssl certificate ensuring encripted communications and password protection for both the MongoDB Cluster and Database.
 
 
 Requirements:
