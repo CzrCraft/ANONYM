@@ -1,5 +1,7 @@
 @echo off
 set /p name=Commit description:
+git remote add origin https://github.com/CzrCraft/ANONYM.git
+git pull
 git add .
 git reset HEAD -- api/node_modules
 git reset HEAD -- App/build
