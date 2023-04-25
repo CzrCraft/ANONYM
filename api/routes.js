@@ -59,15 +59,23 @@ module.exports = {
     login: async function(req, res){
         try{
             const user_model = mongoose.model("user", schemas.UserSchema)
-            if(await user_model.findOne({username: req.headers["username"], password: req.headers["password"]}).exec() != null){
-                const securityToken_model = mongoose.model("security_token", schemas.SecurityTokenSchema)
-                let key = await require("random-token").create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(50)
-                while(await securityToken_model.findOne({token: key}) != null){
-                    key = await require("random-token").create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(50) 
+            if(await user_model.findOne({username: req.headers["username"]}).exec() != null){
+                if(await user_model.findOne({username: req.headers["username"], password: req.headers["password"]}).exec() != null){
+                    const securityToken_model = mongoose.model("security_token", schemas.SecurityTokenSchema)
+                    let key = await require("random-token").create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(50)
+                    while(await securityToken_model.findOne({token: key}) != null){
+                        key = await require("random-token").create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(50) 
+                    }
+                    res.statusCode = 200
+                    res.send(key)
+                    await securityToken_model.updateOne({username: req.headers["username"]}, {token: key, creation_date: Math.round(Date.now() / 1000)})
+                }else{
+                    res.statusCode = 400
+                    res.send("WRONG PASSWORD")
                 }
-                res.statusCode = 200
-                res.send(key)
-                await securityToken_model.updateOne({username: req.headers["username"]}, {token: key, creation_date: Math.round(Date.now() / 1000)})
+            }else{
+                res.statusCode = 400;
+                res.send("USER DOESN'T EXIST");
             }
         }catch(err){
             console.log(err)

@@ -1,13 +1,10 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:Stylr/loginPage.dart';
-import 'package:Stylr/startPage.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'dart:io';
-import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'utilities.dart';
+import 'pages.dart';
 
 GlobalKey RootWidgetKey = GlobalKey();
 Color primaryColor = const Color(0xff272324);
@@ -30,16 +27,17 @@ void main() async {
 class RootWidget extends StatelessWidget {
   RootWidget({super.key});
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  final StartPageKey = new GlobalKey();
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {;
+  Widget build(BuildContext context) {
     return MaterialApp(
-          title: 'Stylr',
-          initialRoute: "/",
-          routes: {
-            "/": (context) => const StartPage(),
-            "/login": (context) => LoginPage(),
-          },
-        );
+      title: 'Stylr',
+      initialRoute: "/",
+      routes: {
+        "/": (context) => new StartPage(key: StartPageKey),
+        "/login": (context) => LoginPage(),
+      },
+    );
   }
 }

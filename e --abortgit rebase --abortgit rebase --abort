@@ -1,0 +1,13 @@
+[33m05f3f6b[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m HEAD@{0}: rebase (finish): returning to refs/heads/main
+[33m05f3f6b[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m HEAD@{1}: rebase (fixup): added signup page, and fixed a werid bug that caused the signUp/login function to get called multiple times
+[33m6bdc37f[m HEAD@{2}: rebase (start): checkout refs/remotes/origin/main
+[33m3badc5f[m HEAD@{3}: rebase (abort): returning to refs/heads/main
+[33m21d5209[m HEAD@{4}: rebase (start): checkout HEAD~4
+[33m3badc5f[m HEAD@{5}: rebase (abort): returning to refs/heads/main
+[33m6bdc37f[m HEAD@{6}: checkout: moving from d14652f2af941c20f22dfdf3c51e8d6d61415b4c to 6bdc37f
+[33md14652f[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{7}: rebase (start): checkout HEAD~2
+[33m3badc5f[m HEAD@{8}: rebase (abort): returning to refs/heads/main
+[33m3badc5f[m HEAD@{9}: rebase (abort): returning to refs/heads/main
+[33m3badc5f[m HEAD@{10}: commit: added signup page, and fixed a werid bug that caused the signUp/login function to get called multiple times
+[33m6bdc37f[m HEAD@{11}: commit: added signup page, and fixed a werid bug that caused the signUp/login function to get called multiple times
+[33md14652f[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{12}: clone: from https://github.com/CzrCraft/ANONYM
