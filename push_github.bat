@@ -5,6 +5,7 @@ git pull
 git add .
 git reset HEAD -- api/node_modules
 git reset HEAD -- App/build
+git reset HEAD -- App/.dart_tool
 echo These are the files that are going to be pushed
 git diff --name-only --cached
 set /p temp_var=Continue?(CTRL + C to cancel)
