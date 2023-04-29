@@ -2,6 +2,18 @@ const mongoose = require("mongoose");
 const fs = require("fs");
 const index_ = require("./index.js");
 const schemas = require("./schemas.js")
+const token_gen = require("random-token")
+async function sha256(message) {
+    // encode as UTF-8
+    const msgBuffer = new TextEncoder().encode(message);                    
+    // hash the message
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    // convert ArrayBuffer to Array
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    // convert bytes to hex string                  
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashHex;
+}
 
 async function checkToken(token){
     if(Math.round(Date.now() / 1000) - token < 2591999){
@@ -32,16 +44,16 @@ module.exports = {
     create_user: async function(req, res){
         try{
             const user_model = mongoose.model("user", schemas.UserSchema)
-            if(await user_model.findOne({username: req.headers["username"]}).exec() == null){
+            if(await user_model.findOne({username: await sha256(req.headers["username"])}).exec() == null){
                 const securityToken_model = mongoose.model("security_token", schemas.SecurityTokenSchema)
-                let key = await require("random-token").create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(50)
-                while(await securityToken_model.findOne({token: key}) != null){
-                    key = await require("random-token").create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(50) 
+                let key = await token_gen.create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(50)
+                while(await securityToken_model.findOne({token: await sha256(key)}) != null){
+                    key = await token_gen.create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(50) 
                 }
+                await user_model.create({username: await sha256(req.headers["username"]), password: await sha256(req.headers["password"]), remaining_uploads: 0})
+                await securityToken_model.create({username: await sha256(req.headers["username"]), token: await sha256(key), creation_date: Math.round(Date.now() / 1000)})
                 res.statusCode = 200;
                 res.send(key)
-                await user_model.create({username: req.headers["username"], password: req.headers["password"], remaining_uploads: 0})
-                await securityToken_model.create({username: req.headers["username"], token: key, creation_date: Math.round(Date.now() / 1000)})
 
             }else{
                 res.statusCode = 409;
@@ -59,16 +71,16 @@ module.exports = {
     login: async function(req, res){
         try{
             const user_model = mongoose.model("user", schemas.UserSchema)
-            if(await user_model.findOne({username: req.headers["username"]}).exec() != null){
-                if(await user_model.findOne({username: req.headers["username"], password: req.headers["password"]}).exec() != null){
+            if(await user_model.findOne({username: await sha256(req.headers["username"])}).exec() != null){
+                if(await user_model.findOne({username: await sha256(req.headers["username"]), password: await sha256(req.headers["password"])}).exec() != null){
                     const securityToken_model = mongoose.model("security_token", schemas.SecurityTokenSchema)
-                    let key = await require("random-token").create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(50)
-                    while(await securityToken_model.findOne({token: key}) != null){
-                        key = await require("random-token").create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(50) 
+                    let key = await token_gen.create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(50)
+                    while(await securityToken_model.findOne({token: await sha256(key)}) != null){
+                        key = await token_gen.create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(50) 
                     }
+                    await securityToken_model.updateOne({username: await sha256(req.headers["username"])}, {token: await sha256(key), creation_date: Math.round(Date.now() / 1000)})
                     res.statusCode = 200
                     res.send(key)
-                    await securityToken_model.updateOne({username: req.headers["username"]}, {token: key, creation_date: Math.round(Date.now() / 1000)})
                 }else{
                     res.statusCode = 400
                     res.send("WRONG PASSWORD")
@@ -144,7 +156,11 @@ module.exports = {
             console.log(err);
             res.send(400)
         }
-    }
+    },
+    upload_design: async function(req, res){
+
+    },
+    
 }
 
 

@@ -62,13 +62,6 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
               1; // delay so that the animation waits for the circle transition to finnish
         });
       });
-    } else if (animationStage == 1) {
-      Future.delayed(const Duration(milliseconds: 1100), () {
-        setState(() {
-          animationStage =
-              2; // delay so that the animation waits for the first one to finnish
-        });
-      });
     }
 
     switch (animationStage) {
@@ -80,10 +73,10 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
               AnimatedTextKit(
                 key: GlobalKey(),
                 animatedTexts: [
-                  TyperAnimatedText("First off, we need your name",
+                  TyperAnimatedText("First off, we need your username",
                       speed: const Duration(milliseconds: 45),
                       textStyle: TextStyle(
-                          fontSize: getFromPercent("horizontal", 5.5, context),
+                          fontSize: getFromPercent("horizontal", 5, context),
                           color: secondaryColor,
                           decoration: TextDecoration.none)),
                 ],
@@ -94,7 +87,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                   });
                 },
                 repeatForever: false,
-                pause: const Duration(milliseconds: 1100),
+                pause: const Duration(milliseconds: 20),
               )
             ],
             mainAxisAlignment: MainAxisAlignment.center,
@@ -106,9 +99,9 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
           color: primaryColor,
           child: Column(
             children: [
-              Text("First off, we need your name",
+              Text("First off, we need your username",
                   style: TextStyle(
-                      fontSize: getFromPercent("horizontal", 5.5, context),
+                      fontSize: getFromPercent("horizontal", 5, context),
                       color: secondaryColor,
                       decoration: TextDecoration.none)),
               Padding(

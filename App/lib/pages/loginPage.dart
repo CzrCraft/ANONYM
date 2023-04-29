@@ -69,13 +69,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
               1; // delay so that the animation waits for the circle transition to finnish
         });
       });
-    } else if (animationStage == 1) {
-      Future.delayed(const Duration(milliseconds: 1100), () {
-        setState(() {
-          animationStage =
-              2; // delay so that the animation waits for the first one to finnish
-        });
-      });
     }
 
     switch (animationStage) {
@@ -101,7 +94,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
                   });
                 },
                 repeatForever: false,
-                pause: const Duration(milliseconds: 1100),
+                pause: const Duration(milliseconds: 20),
               )
             ],
             mainAxisAlignment: MainAxisAlignment.center,
