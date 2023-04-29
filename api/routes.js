@@ -16,8 +16,13 @@ async function sha256(message) {
 }
 
 async function checkToken(token){
-    if(Math.round(Date.now() / 1000) - token < 2591999){
-        return true;
+    let securityToken_model = schemas.SecurityTokenSchema;  
+    if(await securityToken_model.findOne({token: await sha256(key)}) != null){
+        if(Math.round(Date.now() / 1000) - token < 2591999){
+            return true;
+        }else{
+            return false;
+        }
     }else{
         return false;
     }
@@ -96,27 +101,6 @@ module.exports = {
         }
     },
     
-    place_order: async function(req,res){
-        try{
-            const user_model = mongoose.model("user", schemas.UserSchema)
-            const order_model = mongoose.model("order", shemas.OrderSchema)
-            const security_token_model = mongoose.model("security_token", schemas.SecurityTokenSchema)
-            await security_token_model.findOne({token: req.headers["authorization"]}, (err, result) => {
-                if (err) {
-                    console.error(err);
-                    throw err;
-                } else {
-                    if(checkToken(result.creation_date)){
-                        order_model.create({user: result.username, date: Math.round(Date.now() / 1000), file_ids: res.headers["file_ids"].split(",")})
-                    }
-                }
-            })
-        }catch(err){
-            console.log(err)
-            res.statusCode = 400
-            res.send()
-        }
-    },
     upload: async function(req,res){
         try{
             console.log("File upload requested")
@@ -149,16 +133,13 @@ module.exports = {
             console.log(err)
         }
     },
-    place_order: async function(req,res){
-        try{
-            res.sendFile("/uplaods/" + req.headers["file_id"])
-        }catch(err){
-            console.log(err);
-            res.send(400)
-        }
-    },
     upload_design: async function(req, res){
+        try{
 
+        }catch(err){
+            res.status(400)
+            console.log(err);
+        }
     },
     
 }
