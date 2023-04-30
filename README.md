@@ -22,7 +22,7 @@ Installation:
 
   -Then simply run "nodemon" to start the API, assuming the config file was edited right.
 
-     *Note that nodemon is simply for development porpouses.
+     !Note that nodemon is simply for development porpouses.
 
   -For production enviroments install PM2 using "npm install pm2 -g"
 
