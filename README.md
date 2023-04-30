@@ -3,7 +3,7 @@ Team name: ANONYM
 
 School: Scoala Gimnaziala Nr. 49
 
-Teammates: Constantin Cezar Stefan, Matei Dan Mirenu, Alexandru Gheorghe Curmei
+Teammates: Constantin Cezar Stefan
 
 All in one platform for making and sharing custom clothing.
 # API
