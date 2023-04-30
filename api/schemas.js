@@ -14,7 +14,7 @@ module.exports = {
         token: "string",
         creation_date: "string"
     }),
-    OrderSchema: mongoose.Schema({
+    OrderSchema: mongoose.Schema({//currently is useless
         user: "string",
         date: "string",
         order_id: "string",
@@ -33,5 +33,13 @@ module.exports = {
         author: "string",
         date: "string",
         file_type: "string"
+    }),
+    DesignSchema: mongoose.Schema({
+        author: "string",
+        like_count: "int",
+        print_provider_id: "string",
+        blueprint_id: "string",
+        creation_date: "string",
+        properties: "string",
     }),
 }

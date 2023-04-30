@@ -14,8 +14,25 @@ Requirements:
   * **MongoDB Enterprise edition**
   * **Node JS**
   
-Before running the api run the command "npm install" to install all the dependencies.
+Installation:
+
+  -First run "npm install" to install all the required dependencies.
+
+  -Then run "npm install nodemon".
+
+  -Then simply run "nodemon" to start the API, assuming the config file was edited right.
+
+     *Note that nodemon is simply for development porpouses.
+
+  -For production enviroments install PM2 using "npm install pm2 -g"
+
+  -And start the API using this command: "pm2 start api.js -i <core_nr>"
+  
+   *More info can be found at: https://www.npmjs.com/package/pm2
+
 Api should be configured in the config.json file, and port forwarding should be allowed if you were to host the api to the public.
+
+MongoDB should be configured with an ssl certificate, acceptable ip classes set to 0.0.0.0 if using a seperate server, and a user and password be set on the server.
 
 # APP
 It's app is lightweight, and fast. Our only concern is to make this as straightforward as possible. It has a simple and clean UI.
@@ -24,3 +41,5 @@ It's app is lightweight, and fast. Our only concern is to make this as straightf
 Requirements:
  * **Dart**
  * **Flutter**
+
+Before running/building it run "flutter pub get" to install all the required packages.

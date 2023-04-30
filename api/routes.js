@@ -220,11 +220,20 @@ module.exports = {
                     })
                 }).end();
         }catch(err){
-            response.send(400);
+            response.send(500);
             console.log(err);
         }
-    }
+    },
     
+    upload_design: async function(req, response, token){
+        try{
+            let securityTokenModel = mongoose.model("security_token", schemas.SecurityTokenSchema);
+            let author_name = securityTokenModel.findOne({token: sha256(token)}).exec();
+        }catch(err){
+            res.send(500)
+            console.log(err);
+        }
+    },
 }
 
 

@@ -37,8 +37,9 @@ function doneReading(){
     //          file handling
     server.post("/api/files/upload", (req,res) => {routes.auth_handler(req, res, routes.upload)})
     server.get("/api/files/:file_id", (req,res) => {routes.get_file(req, res)})
-    
+    //          catalog handling
     server.get("/api/catalog/blueprints", (req,res) => {routes.get_blueprints(req, res)})
+    server.post("/api/catalog/designs", (req,res) => {routes.auth_handler(req, res, routes.upload_design)})
     
 }
 fs.readFile("config.json", "utf8", (err, jsonString) => {
