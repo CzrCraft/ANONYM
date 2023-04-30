@@ -1,2 +1,0 @@
-primary_color: #272324
-secondary_color: #feba57

@@ -1,1 +1,0 @@
-export 'package:Stylr/pages.dart';
