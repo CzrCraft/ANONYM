@@ -28,14 +28,18 @@ function doneReading(){
                 configs["server_settings"]["database_settings"]["name"],
                 configs["server_settings"]["database_settings"]["verify_ssl_certificate"],
                 configs["server_settings"]["security_token_valability"],
-                configs["server_settings"]["upload_dir"]);
-    server.get('/api', (req,res)=>{res.send("Base dir of iStyleAPI")})
+                configs["server_settings"]["upload_dir"],
+                configs["printify"]["token"]);
+    server.get('/api', (req,res)=>{res.send("Base dir of Stylr's API")})
+    //          user handling
     server.get("/api/user/signup", (req,res) => {routes.create_user(req, res)})
     server.get("/api/user/login", (req,res) => {routes.login(req, res)})
+    //          file handling
     server.post("/api/files/upload", (req,res) => {routes.auth_handler(req, res, routes.upload)})
     server.get("/api/files/:file_id", (req,res) => {routes.get_file(req, res)})
     
-  
+    server.get("/api/catalog/blueprints", (req,res) => {routes.get_blueprints(req, res)})
+    
 }
 fs.readFile("config.json", "utf8", (err, jsonString) => {
     if (err) {

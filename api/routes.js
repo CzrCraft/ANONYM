@@ -5,8 +5,12 @@ const schemas = require("./schemas.js")
 const token_gen = require("random-token")
 const crypto = require("crypto")
 const path = require('path');
+const https = require('https');
+
 let security_token_valability_s = 0;
 let uploadDir = "/";
+
+let printifyApiToken = "";
 async function sha256(message) {
     // encode as UTF-8
     const msgBuffer = new TextEncoder().encode(message);                    
@@ -55,10 +59,11 @@ async function getUserFromToken(token){
 }
 
 module.exports = {
-    main: async function(db_ip, db_port, db_password, db_username, db_name, verify_cert, security_token_valability, fUploadDir){
+    main: async function(db_ip, db_port, db_password, db_username, db_name, verify_cert, security_token_valability, fUploadDir, printifyToken){
         try{
             uploadDir = fUploadDir; // fUploadDir == File Upload Directory
             security_token_valability_s = security_token_valability;
+            printifyApiToken = printifyToken
             await mongoose.connect("mongodb://" + db_username + ":" + db_password + "@" + db_ip + ":" + db_port + "/" + db_name, { ssl: true , sslValidate: verify_cert}).catch(error => {
                 console.log("Encountered an error connecting to the database!")
                 throw(error)
@@ -192,6 +197,31 @@ module.exports = {
             route_func(req, res, req.headers.authorization.split(" ")[1]);
         }else{
             res.status(400).send("INVALID TOKEN");
+        }
+    },
+
+    get_blueprints: async function(req, response, token){
+        try{
+            let result = "";// rename response because i also get a response from the GET request
+            await https.request({
+                host: "api.printify.com", 
+                method: "GET", 
+                path: "/v1/catalog/blueprints.json", 
+                headers: {
+                    "Authorization": "Bearer " + printifyApiToken
+                }},
+                async (res) =>  {
+                    await res.on("data", function(chunk) {
+                        result += chunk;
+                    });
+                    res.on("end", function(){
+                        response.statusCode = 202;
+                        response.send(result);
+                    })
+                }).end();
+        }catch(err){
+            response.send(400);
+            console.log(err);
         }
     }
     
