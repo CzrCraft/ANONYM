@@ -21,22 +21,19 @@ function doneReading(){
       .listen(port, ()=>{
         console.log('server is running on port ' + port)
       });
-    
-    // Create an try point route for the Express app listening on port 4000.
-    // This code tells the service to listed to any request coming to the / route.
-    // Once the request is received, it will display a message "Hello from express server."
     routes.main(configs["server_settings"]["database_settings"]["ip"], 
                 configs["server_settings"]["database_settings"]["port"], 
                 configs["server_settings"]["database_settings"]["password"], 
                 configs["server_settings"]["database_settings"]["user"], 
                 configs["server_settings"]["database_settings"]["name"],
-                configs["server_settings"]["database_settings"]["verify_ssl_certificate"]);
+                configs["server_settings"]["database_settings"]["verify_ssl_certificate"],
+                configs["server_settings"]["security_token_valability"],
+                configs["server_settings"]["upload_dir"]);
     server.get('/api', (req,res)=>{res.send("Base dir of iStyleAPI")})
     server.get("/api/user/signup", (req,res) => {routes.create_user(req, res)})
     server.get("/api/user/login", (req,res) => {routes.login(req, res)})
-    server.get("/api/order", (req,res) => {routes.place_order(req, res)})
-    server.get("/api/order/upload", (req,res) => {routes.upload(req, res)})
-    server.get("api/order/get_file", (req,res) => {routes.upload(req, res)})
+    server.post("/api/files/upload", (req,res) => {routes.auth_handler(req, res, routes.upload)})
+    server.get("/api/files/:file_id", (req,res) => {routes.get_file(req, res)})
     
   
 }

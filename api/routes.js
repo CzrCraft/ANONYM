@@ -3,6 +3,10 @@ const fs = require("fs");
 const index_ = require("./index.js");
 const schemas = require("./schemas.js")
 const token_gen = require("random-token")
+const crypto = require("crypto")
+const path = require('path');
+let security_token_valability_s = 0;
+let uploadDir = "/";
 async function sha256(message) {
     // encode as UTF-8
     const msgBuffer = new TextEncoder().encode(message);                    
@@ -16,22 +20,45 @@ async function sha256(message) {
 }
 
 async function checkToken(token){
-    let securityToken_model = schemas.SecurityTokenSchema;  
-    if(await securityToken_model.findOne({token: await sha256(key)}) != null){
-        if(Math.round(Date.now() / 1000) - token < 2591999){
-            return true;
+    try{
+        let securityToken_model = mongoose.model("security_token", schemas.SecurityTokenSchema);
+        let token_result = await securityToken_model.findOne({token: await sha256(token)});
+        if(token_result != null){
+            if(Math.round(Date.now() / 1000) - token_result.creation_date < security_token_valability_s){
+                return true;
+            }else{
+                return false;
+            }
         }else{
             return false;
         }
-    }else{
-        return false;
+    }catch(err){
+        console.log(err);
+    }
+}
+
+async function getUserFromToken(token){
+    try{
+        let securityTokenModel = mongoose.model("security_token", schemas.SecurityTokenSchema);
+        // check if token can be found inside the database
+        if(await securityTokenModel.findOne({token: await sha256(token)}).exec() == null){
+            return "COULDN'T FIND TOKEN"
+        }else{
+            let result = "INVALID_TOKEN";
+            //get the user from said result
+            result = (await securityTokenModel.findOne({token: await sha256(token)}).exec()).username;
+            return result;
+        }
+    }catch(err){
+        console.log(err);
     }
 }
 
 module.exports = {
-    main: async function(db_ip, db_port, db_password, db_username, db_name, verify_cert){
+    main: async function(db_ip, db_port, db_password, db_username, db_name, verify_cert, security_token_valability, fUploadDir){
         try{
-            
+            uploadDir = fUploadDir; // fUploadDir == File Upload Directory
+            security_token_valability_s = security_token_valability;
             await mongoose.connect("mongodb://" + db_username + ":" + db_password + "@" + db_ip + ":" + db_port + "/" + db_name, { ssl: true , sslValidate: verify_cert}).catch(error => {
                 console.log("Encountered an error connecting to the database!")
                 throw(error)
@@ -101,13 +128,14 @@ module.exports = {
         }
     },
     
-    upload: async function(req,res){
+    upload: async function(req,res, raw_token){
         try{
             console.log("File upload requested")
             let sampleFile;
             let uploadPath;
-
+            let fileTrackerModel = mongoose.model("fileTracker", schemas.FileTrackerSchema)
             if (!req.files || Object.keys(req.files).length === 0) {
+                console.log(req.body);
                 console.log("No files were uploaded.")
                 return res.status(400).send('No files were uploaded.');
             }
@@ -117,30 +145,55 @@ module.exports = {
             while(await fs.existsSync("/uploads/" + key)){
                 key = await require("random-token").create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(50) 
             }
-            uploadPath = __dirname + '/uploads/' + key;
+            uploadPath = __dirname + '/uploads/' + key + "." + sampleFile.name.split(".")[1];
 
             // Use the mv() method to place the file somewhere on your server
-            sampleFile.mv(uploadPath, function(err) {
-                if (err){
-                    console.log(err)
-                    return res.status(400).send(err);
-                }
-                
-                console.log("File uploaded!");
-                res.status(200).send(key);
-            });
+            let user_hash = await getUserFromToken(req.headers["token"]);
+            if(user_hash != "INVALID_TOKEN"){
+                fileTrackerModel.create({author: await getUserFromToken(raw_token), file_id: key, file_type: sampleFile.name.split(".")[1], date: Math.round(Date.now() / 1000)})
+                sampleFile.mv(uploadPath, async function(err) {
+                    if (err){
+                        console.log(err)
+                        res.status(400).send("error");
+                    }else{
+                        console.log("File uploaded!");
+                        res.status(200).send(key);
+                    }
+                })
+            }else{
+                res.status(400).send("INVALID TOKEN");
+            }
+            
         }catch(err){
             console.log(err)
         }
     },
-    upload_design: async function(req, res){
+    get_file: async function(req, res){
         try{
-
+            const reading_options = {
+                root: path.join(__dirname)
+            };
+            let fileTrackerModel = mongoose.model("fileTracker", schemas.FileTrackerSchema)
+            let fileTracker = await fileTrackerModel.findOne({file_id: req.params.file_id}).exec()
+            if(fileTracker != null){
+                res.status(200).sendFile(uploadDir + fileTracker.file_id + "." + fileTracker.file_type, reading_options, function(err){
+                    if(err){
+                        console.log(err);
+                    }
+                })
+            }
         }catch(err){
             res.status(400)
             console.log(err);
         }
     },
+    auth_handler: async function(req, res, route_func){
+        if(await checkToken(req.headers.authorization.split(" ")[1])){
+            route_func(req, res, req.headers.authorization.split(" ")[1]);
+        }else{
+            res.status(400).send("INVALID TOKEN");
+        }
+    }
     
 }
 

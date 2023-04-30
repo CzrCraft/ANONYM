@@ -27,5 +27,11 @@ module.exports = {
         city: "string",
         zip_code: "string",
         printify_order_id: "string",
-    })
+    }),
+    FileTrackerSchema: mongoose.Schema({
+        file_id: "string",
+        author: "string",
+        date: "string",
+        file_type: "string"
+    }),
 }

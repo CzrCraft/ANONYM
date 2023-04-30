@@ -21,6 +21,7 @@
     "styletron-react": "^6.1.0"
   },
   "devDependencies": {
-    "electron": "^24.0.0"
+    "electron": "^24.0.0",
+    "nodemon": "^2.0.22"
   }
 }

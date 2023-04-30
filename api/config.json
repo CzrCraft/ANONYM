@@ -7,8 +7,10 @@
         "port": 42069,
         "ssl_passphrase": "niggers",
         "domain": "stylr.go.ro",
+        "security_token_valability": "2591999",
+        "upload_dir": "/uploads/", 
         "database_settings": {
-            "ip": "127.0.0.1",
+            "ip": "stylr.go.ro",
             "port": 27017,
             "name": "Stylr",
             "user": "api_user",

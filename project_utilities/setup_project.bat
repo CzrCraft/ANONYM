@@ -1,5 +1,6 @@
 @echo off
 cd ..
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
 echo        -Installing API depenencies..-
 cd api
 npm install
