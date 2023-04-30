@@ -32,9 +32,9 @@ Installation:
 
 List of commands:
 
-    *npm install
-    *npm install nodemon
-    *nodemon
+    npm install
+    npm install nodemon
+    nodemon
 
 Api should be configured in the config.json file, and port forwarding should be allowed if you were to host the api to the public.
 
