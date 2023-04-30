@@ -36,7 +36,7 @@ module.exports = {
     }),
     DesignSchema: mongoose.Schema({
         author: "string",
-        like_count: "int",
+        like_count: "number",
         print_provider_id: "string",
         blueprint_id: "string",
         creation_date: "string",

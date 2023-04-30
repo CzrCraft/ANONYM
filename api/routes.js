@@ -225,12 +225,24 @@ module.exports = {
         }
     },
     
-    upload_design: async function(req, response, token){
+    upload_design: async function(req, res, token){
         try{
             let securityTokenModel = mongoose.model("security_token", schemas.SecurityTokenSchema);
-            let author_name = securityTokenModel.findOne({token: sha256(token)}).exec();
+            let designModel = mongoose.model("design", schemas.DesignSchema)
+            let author_name = await securityTokenModel.findOne({token: await sha256(token)}).exec().username;
+            let print_provider = req.headers["print_provider"]
+            let blueprint = req.headers["blueprint_id"]
+            let design_creation_date = Math.round(Date.now() / 1000)
+            let design_properties = req.body.properties
+
+            let result = await designModel.create({author: author_name, like_count: 0, print_provider_id: print_provider, blueprint_id: blueprint, creation_date: design_creation_date, properties: design_properties})
+            if(result != null){
+                res.sendStatus(200);
+            }else{
+                res.sendStatus(400);
+            }
         }catch(err){
-            res.send(500)
+            res.sendStatus(500)
             console.log(err);
         }
     },
