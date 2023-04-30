@@ -3,7 +3,7 @@ Team name: ANONYM
 
 School: Scoala Gimnaziala Nr. 49
 
-Teammates: Constantin Cezar Stefan, Matei Dan Mirenu, Alexandru Gheorghe Curmei
+Teammates: Constantin Cezar Stefan
 
 All in one platform for making and sharing custom clothing.
 # API
@@ -16,19 +16,25 @@ Requirements:
   
 Installation:
 
-  -First run "npm install" to install all the required dependencies.
+  * First run "npm install" to install all the required dependencies.
 
-  -Then run "npm install nodemon".
+  * Then run "npm install nodemon".
 
-  -Then simply run "nodemon" to start the API, assuming the config file was edited right.
+  * Then simply run "nodemon" to start the API, assuming the config file was edited right.
 
-     *Note that nodemon is simply for development porpouses.
+*Note that nodemon is simply for development porpouses.
 
-  -For production enviroments install PM2 using "npm install pm2 -g"
+  * For production enviroments install PM2 using "npm install pm2 -g"
 
-  -And start the API using this command: "pm2 start api.js -i <core_nr>"
+  * And start the API using this command: "pm2 start api.js -i <core_nr>"
   
-   *More info can be found at: https://www.npmjs.com/package/pm2
+*More info can be found at: https://www.npmjs.com/package/pm2
+
+List of commands:
+
+    npm install
+    npm install nodemon
+    nodemon
 
 Api should be configured in the config.json file, and port forwarding should be allowed if you were to host the api to the public.
 
