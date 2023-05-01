@@ -17,8 +17,6 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
-  // using a ticker to check every frame if login() func has returned a result
-  // and if so act accordingly
 
   @override
   int animationStage = 0;
@@ -28,12 +26,16 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _resultState = 0;
+    // this callback func is going to be called every time flutter renders a new frame
+    // all it does is check if you have signed in succsesfully
+    // and if so switch to the next page and terminate the ticker
     _ticker = super.createTicker((Duration elapsedTime) {
       if (_resultState == 1) {
         _ticker.stop();
-        Navigator.push(context, animatedRoute(new HomePage()));
+        Navigator.push(context, animatedRoute(new HomePage(0)));
       } else if (_resultState == 2) {
         try {
+          // this is to avoid crashing the app if it can't pop the widget 
           if (Navigator.canPop(context)) {
             _ticker.stop();
             Navigator.pop(context);
@@ -42,6 +44,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
           print(err);
         }
       }
+      // this is to make sure that it doesnt go to that page twice
       _resultState = 0;
     });
     _ticker.start();
@@ -299,7 +302,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
           return _SignUp(username, password);
         } catch (err) {
           print(err);
-          return const LoadingDots();
+          return LoadingDots();
         }
     }
     return Container(color: primaryColor);
@@ -368,9 +371,9 @@ class __SignUpState extends State<_SignUp> {
             //     color: primaryColor);
           }
         } else {
-          return const LoadingDots();
+          return LoadingDots();
         }
-        return const LoadingDots();
+        return LoadingDots();
       },
       future: signupFuture,
     );

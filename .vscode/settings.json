@@ -1,0 +1,6 @@
+{
+    "editor.formatOnSave": false,
+    "diffEditor.renderSideBySide": false,
+    "diffEditor.wordWrap": "off",
+    "editor.minimap.maxColumn": 120
+}

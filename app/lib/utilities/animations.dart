@@ -4,28 +4,62 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:Stylr/main.dart';
 import 'package:flutter/material.dart';
 
-class LoadingDots extends StatelessWidget {
-  const LoadingDots({super.key});
+Route createBasicRoute(Widget child_widget) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => child_widget,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return child;
+    },
+  );
+}
 
+class LoadingDots extends StatelessWidget {
+  LoadingDots({super.key, this.lightMode = false});
+  bool lightMode;
   @override
   Widget build(BuildContext context) {
-    return Container(
+    if(lightMode){
+      return Container(
+        color: secondaryColor,
+        child: Center(
+          child: AnimatedTextKit(
+            animatedTexts: [
+              TyperAnimatedText("...",
+                  speed: const Duration(milliseconds: 500),
+                  textStyle: TextStyle(
+                      fontSize: 80.0,
+                      color: primaryColor,
+                      decoration: TextDecoration.none,
+                      backgroundColor: Colors.transparent))
+            ],
+            repeatForever: true,
+            totalRepeatCount: 100000,
+            pause: const Duration(milliseconds: 500),
+          )
+        )
+      );
+    }else{
+      return Container(
         color: primaryColor,
         child: Center(
-            child: AnimatedTextKit(
-          animatedTexts: [
-            TyperAnimatedText("...",
-                speed: const Duration(milliseconds: 500),
-                textStyle: TextStyle(
-                    fontSize: 80.0,
-                    color: secondaryColor,
-                    decoration: TextDecoration.none,
-                    backgroundColor: Colors.transparent))
-          ],
-          repeatForever: true,
-          totalRepeatCount: 100000,
-          pause: const Duration(milliseconds: 500),
-        )));
+          child: AnimatedTextKit(
+            animatedTexts: [
+              TyperAnimatedText("...",
+                  speed: const Duration(milliseconds: 500),
+                  textStyle: TextStyle(
+                      fontSize: 80.0,
+                      color: secondaryColor,
+                      decoration: TextDecoration.none,
+                      backgroundColor: Colors.transparent))
+            ],
+            repeatForever: true,
+            totalRepeatCount: 100000,
+            pause: const Duration(milliseconds: 500),
+          )
+        )
+      );
+    }
+    
   }
 }
 
@@ -57,7 +91,7 @@ Route animatedRoute(Widget p_widget, {p_widgetKey}) {
       var screenSize = MediaQuery.of(context).size;
       Offset center = Offset(screenSize.width / 2, screenSize.height / 2);
       double beginRadius = 0.0;
-      double endRadius = screenSize.height * 1.2;
+      double endRadius = screenSize.height * 1.5;
 
       var tween = Tween<double>(begin: beginRadius, end: endRadius);
       double radiusTweenAnimation = animation.drive<double>(tween).value;

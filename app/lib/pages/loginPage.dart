@@ -7,7 +7,8 @@ import 'utilities.dart';
 import 'pages.dart';
 import 'package:flutter/scheduler.dart';
 
-int _resultState = 0; //using local variable because it would be way to complicated to use GlobalKey's
+int _resultState =
+    0; //using local variable because it would be way to complicated to use GlobalKey's
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -16,25 +17,29 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
+class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   // using a ticker to check every frame if login() func has returned a result
   // and if so act accordingly
   @override
-  int animationStage = 0;
-  String username = "";
+  int animationStage = 0; // i use this for keeping track at what stage of the "animation" the widget is currently at
+  String username = ""; // ex: when you input your username its at stage 2, etc..
   String password = "";
   late Ticker _ticker;
   @override
   void initState() {
     super.initState();
     _resultState = 0;
+    // this callback func is going to be called every time flutter renders a new frame
+    // all it does is check if you have logged in succsesfully
+    // and if so switch to the next page and terminate the ticker
     _ticker = super.createTicker((Duration elapsedTime) {
       if (_resultState == 1) {
-          _ticker.stop();
-          Navigator.push(context, animatedRoute(new HomePage()));
+        _ticker.stop();
+        Navigator.push(context, animatedRoute(new HomePage(0)));
       } else if (_resultState == 2) {
         try {
-          if(Navigator.canPop(context)){
+          // this is to avoid crashing the app if it can't pop the widget
+          if (Navigator.canPop(context)) {
             _ticker.stop();
             Navigator.pop(context);
           }
@@ -43,7 +48,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
         }
       } else if (_resultState == 3) {
         try {
-          if(Navigator.canPop(context)){
+          if (Navigator.canPop(context)) {
             _ticker.stop();
             Navigator.pop(context);
           }
@@ -51,15 +56,18 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
           print(err);
         }
       }
+      // this is to make sure that it doesnt go to that page twice
       _resultState = 0;
     });
     _ticker.start();
   }
+
   @override
   void dispose() {
     _ticker.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     if (animationStage == 0) {
@@ -331,6 +339,7 @@ class _Login extends StatefulWidget {
   @override
   State<_Login> createState() => __LoginState();
 }
+
 //TODO: add error messages for loging in
 class __LoginState extends State<_Login> {
   @override
@@ -351,7 +360,7 @@ class __LoginState extends State<_Login> {
             print(snapshot.data?.body);
             if (snapshot.data!.body != "USER DOESN'T EXIST") {
               if (snapshot.data!.body != "WRONG PASSWORD") {
-                _resultState = 1; 
+                _resultState = 1;
               } else {
                 _resultState = 2;
               }
@@ -361,9 +370,9 @@ class __LoginState extends State<_Login> {
             return LoadingDots();
           }
         } else {
-          return const LoadingDots();
+          return LoadingDots();
         }
-        return const LoadingDots();
+        return LoadingDots();
       },
       future: signupFuture,
     );
