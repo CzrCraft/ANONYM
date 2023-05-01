@@ -1,0 +1,285 @@
+{
+	"info": {
+		"_postman_id": "5a20bcea-3557-45b1-b6cf-1f5b530e2a2c",
+		"name": "Stylr API",
+		"description": "# ⛓️ Get started here\n\nPostman allows you to test your APIs using simple Javascript code. You can evaluate your response body, headers, cookies, and more using the [ChaiJS BDD](https://www.chaijs.com/api/bdd/) syntax.\n\nThis template guides you through the process of setting up an integration test to ensure that all individual components of an API function together seamlessly.\n\nThe API under test in this collection includes three endpoints for registering and receiving a token, accessing your unique generated name, and unregistering a token:\n\n- POST `/register`\n- POST `/unregister`\n- GET `/my-name`\n    \n\nBy setting up requests in the order of the operation, we can test the flow of data to and from the endpoints and ensure they work together as expected. We also verify that the data persists between requests on the back end.\n\n## 🔖 **How to use this template**\n\n**Step 1:** Check out the requests' documentation to learn more about -\n\n- what each request is meant to do.\n- the tests we've added against each one.\n    \n\n**Step 2:** Run this collection by clicking on \"Run\".\n\n<img src=\"https://content.pstmn.io/84019b0f-69c8-4c5f-98b9-2c90a6f9a0b1/Y29sbGVjdGlvbi1ydW5uZXItYnV0dG9uLmpwZWc=\" alt=\"\" height=\"103\" width=\"266\">\n\n**Step 3:** To customize this template, replace the request URLs with your API endpoints and add or edit the tests if needed.\n\n## ℹ️ Resources\n\n[Scripting in Postman](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/)\n\n[Test script examples](https://learning.postman.com/docs/writing-scripts/script-references/test-examples/)\n\n[Postman Sandbox API reference](https://learning.postman.com/docs/sending-requests/grpc/postman-sandbox-api/#writing-assertions)\n\n[Using the Collection Runner](https://learning.postman.com/docs/collections/running-collections/intro-to-collection-runs/)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27173530"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "username",
+								"value": "testacc",
+								"type": "text"
+							},
+							{
+								"key": "password",
+								"value": "testacc",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:42069/api/user/login",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "42069",
+							"path": [
+								"api",
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Signup",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "username",
+								"value": "testacc",
+								"type": "text"
+							},
+							{
+								"key": "password",
+								"value": "testacc",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:42069/api/user/signup",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "42069",
+							"path": [
+								"api",
+								"user",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Files",
+			"item": [
+				{
+					"name": "Upload file",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"contentType": "multipart/form-data",
+									"type": "file",
+									"src": "/C:/Users/czrcr/Desktop/ANONYM/api/postman/file_tester_upload.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://localhost:42069/api/files/upload",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "42069",
+							"path": [
+								"api",
+								"files",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get file",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"contentType": "multipart/form-data",
+									"type": "file",
+									"src": "/C:/Users/czrcr/Desktop/ANONYM/api/postman/file_tester_upload.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://localhost:42069/api/files/KEtGlQUzYuEkKkbaOYMXESQwG5JBF7nckATDrUNjawvw15xtGZ",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "42069",
+							"path": [
+								"api",
+								"files",
+								"KEtGlQUzYuEkKkbaOYMXESQwG5JBF7nckATDrUNjawvw15xtGZ"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Catalog",
+			"item": [
+				{
+					"name": "Get blueprints",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:42069/api/catalog/blueprints",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "42069",
+							"path": [
+								"api",
+								"catalog",
+								"blueprints"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get designs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:42069/api/catalog/designs",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "42069",
+							"path": [
+								"api",
+								"catalog",
+								"designs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Design",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "print_provider",
+								"value": "212",
+								"type": "text"
+							},
+							{
+								"key": "blueprint_id",
+								"value": "313",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"properties\": \"n word\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:42069/api/catalog/designs",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "42069",
+							"path": [
+								"api",
+								"catalog",
+								"designs"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "wAFvYN8WoPrWbxmiL8kHzffufvC7Z1MSS9FV5FVFTRvdVBBQ2s",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "baseUrl",
+			"value": "https://postman-integration-testing.glitch.me/",
+			"type": "string"
+		}
+	]
+}

@@ -1,10 +1,7 @@
 // ignore_for_file: sort_child_properties_last
 
-import 'dart:ffi';
-
 import 'package:Stylr/main.dart';
 import 'package:Stylr/pages/Home/Home_profilePage.dart';
-import 'package:Stylr/utilities/miscellaneous.dart';
 import 'package:flutter/material.dart';
 import '../utilities.dart';
 import 'pages.dart';
@@ -26,7 +23,7 @@ class _HomePageState extends State<HomePage> {
     // when the widget is initialised it sets it's child page based on the id passed as a param
     switch (widget.childPageID) {
       case 0:
-        childPage = Container();
+        childPage = CataloguePage();
         break;
       case 1:
         childPage = new CataloguePage();

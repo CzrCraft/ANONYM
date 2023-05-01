@@ -7,11 +7,10 @@ import 'utilities.dart';
 import 'pages.dart';
 
 GlobalKey RootWidgetKey = GlobalKey();
-Color primaryColor = const Color(0xff272324);
-Color secondaryColor = const Color(0xfffeba57);
-bool debugMode =
-    true; // DEBUG MODE IS ONLY FOR DEVELOPMENT PORPOUSES AND NOT INTENDED TO BE ENABELD IN DEPLYOMENT!
-
+Color primaryColor = Color.fromARGB(255, 0, 0, 0);
+Color secondaryColor = Color.fromARGB(255, 255, 255, 255);
+bool debugMode = true; // DEBUG MODE IS ONLY FOR DEVELOPMENT PORPOUSES AND NOT INTENDED TO BE ENABELD IN DEPLYOMENT!
+String api_token = "";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (debugMode) {

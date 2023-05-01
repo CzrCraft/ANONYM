@@ -202,7 +202,7 @@ module.exports = {
 
     get_blueprints: async function(req, response, token){
         try{
-            let result = "";// rename response because i also get a response from the GET request
+            let result = "";
             await https.request({
                 host: "api.printify.com", 
                 method: "GET", 
@@ -243,6 +243,23 @@ module.exports = {
             }
         }catch(err){
             res.sendStatus(500)
+            console.log(err);
+        }
+    },
+
+    get_designs: async function(req, res, token){
+        try{
+            let designModel = mongoose.model("design", schemas.DesignSchema);
+            let result = await designModel.find({}, "-_id -print_provider_id -__v").sort({like_count: -1}).limit(50).exec()
+            if(result != null){
+                res.status = 200;
+                console.log(result);
+                res.send(result);
+            }else{
+                res.sendStatus(500);
+            }
+        }catch(err){
+            res.sendStatus(500);
             console.log(err);
         }
     },

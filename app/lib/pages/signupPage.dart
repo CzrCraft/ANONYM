@@ -343,6 +343,7 @@ class __SignUpState extends State<_SignUp> {
           if (snapshot.hasData) {
             print(snapshot.data!.body);
             if (snapshot.data!.body != "USER ALREADY EXISTS") {
+              api_token = snapshot.data!.body;
               _resultState = 1;
             } else {
               _resultState = 2;

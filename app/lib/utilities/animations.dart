@@ -82,8 +82,8 @@ class CircleRevealClipper extends CustomClipper<Path> {
 
 Route animatedRoute(Widget p_widget, {p_widgetKey}) {
   return PageRouteBuilder(
-    transitionDuration: Duration(milliseconds: 650),
-    reverseTransitionDuration: Duration(milliseconds: 450),
+    transitionDuration: Duration(milliseconds: 1300),
+    reverseTransitionDuration: Duration(milliseconds: 800),
     opaque: false,
     barrierDismissible: false,
     pageBuilder: (context, animation, secondaryAnimation) => p_widget,

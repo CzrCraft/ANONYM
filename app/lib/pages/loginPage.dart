@@ -6,7 +6,6 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'utilities.dart';
 import 'pages.dart';
 import 'package:flutter/scheduler.dart';
-
 int _resultState =
     0; //using local variable because it would be way to complicated to use GlobalKey's
 
@@ -360,6 +359,7 @@ class __LoginState extends State<_Login> {
             print(snapshot.data?.body);
             if (snapshot.data!.body != "USER DOESN'T EXIST") {
               if (snapshot.data!.body != "WRONG PASSWORD") {
+                api_token = snapshot.data!.body;
                 _resultState = 1;
               } else {
                 _resultState = 2;
