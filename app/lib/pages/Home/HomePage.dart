@@ -23,16 +23,16 @@ class _HomePageState extends State<HomePage> {
     // when the widget is initialised it sets it's child page based on the id passed as a param
     switch (widget.childPageID) {
       case 0:
-        childPage = CataloguePage();
+        childPage = CataloguePage(key: GlobalKey());
         break;
       case 1:
-        childPage = new CataloguePage();
+        childPage = new CataloguePage(key: GlobalKey());
         break;
       case 2:
-        childPage = new DesignerPage();
+        childPage = new DesignerPage(key: GlobalKey());
         break;
       case 3:
-        childPage = new ProfilePage();
+        childPage = new ProfilePage(key: GlobalKey());
     }
     super.initState();
   }
@@ -44,6 +44,7 @@ class _HomePageState extends State<HomePage> {
       color: secondaryColor,
       child: Stack(
         children: [
+          childPage,
           Positioned(
             child: SizedBox(
               child: Container(
@@ -98,7 +99,6 @@ class _HomePageState extends State<HomePage> {
             bottom: getFromPercent("vertical", 5, context),
             left: getFromPercent("horizontal", 25, context),
           ),
-          childPage,
         ],
       ),
     ));

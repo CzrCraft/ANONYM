@@ -2,5 +2,7 @@
     "editor.formatOnSave": false,
     "diffEditor.renderSideBySide": false,
     "diffEditor.wordWrap": "off",
-    "editor.minimap.maxColumn": 120
+    "editor.minimap.maxColumn": 120,
+    "cmake.sourceDirectory": "C:/Users/czrcr/Desktop/ANONYM/app/windows/runner",
+    "cmake.configureOnOpen": false
 }

@@ -93,7 +93,7 @@ module.exports = {
                 res.send(key)
 
             }else{
-                res.statusCode = 409;
+                res.statusCode = 400;
                 res.send("USER ALREADY EXISTS");
             }
             
@@ -215,7 +215,7 @@ module.exports = {
                         result += chunk;
                     });
                     res.on("end", function(){
-                        response.statusCode = 202;
+                        response.statusCode = 200;
                         response.send(result);
                     })
                 }).end();

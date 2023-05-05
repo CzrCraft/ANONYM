@@ -2,7 +2,7 @@ import 'package:Stylr/main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 
-String _apiIP = "https://192.168.100.15:42069";
+String _apiIP = "https://stylr.go.ro:42069";
 
 class MyHttpOverrides extends HttpOverrides {
   // USED ONLY FOR NOT VERIFYING SSL CERTIFICATES
@@ -16,7 +16,7 @@ class MyHttpOverrides extends HttpOverrides {
 }
 
 Future login(String username, String password) async {
-  return http.get(
+  return await http.get(
     Uri.parse(_apiIP + "/api/user/login"),
     headers: {
       "username": username,
@@ -27,7 +27,7 @@ Future login(String username, String password) async {
 
 Future signup(String username, String password) async {
   print("signup requested");
-  return http.get(
+  return await http.get(
     Uri.parse(_apiIP + "/api/user/signup"),
     headers: {
       "username": username,
@@ -36,11 +36,11 @@ Future signup(String username, String password) async {
   );
 }
 
-Future get_blueprints() async {
-  return http.get(
+Future get_blueprints(String security_token) async {
+  return await http.get(
     Uri.parse(_apiIP + "/api/catalog/blueprints"),
     headers: {
-      "Authorization": "Bearer $api_token"
+      "Authorization": "Bearer $security_token"
     }
   );
 }

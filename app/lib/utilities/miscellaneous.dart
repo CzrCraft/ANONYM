@@ -14,3 +14,4 @@ double getFromPercent(String type, double percent, BuildContext context) {
   throw "incorrect getFromPercent parameters. Parameter structure is (String type: vertical/horizontal, int percent: 0 <-> 100, BuildContext context)";
   return 0;
 }
+
