@@ -17,7 +17,6 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
-
   @override
   int animationStage = 0;
   String username = "";
@@ -32,10 +31,11 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
     _ticker = super.createTicker((Duration elapsedTime) {
       if (_resultState == 1) {
         _ticker.stop();
+        writeValue("apiToken", api_token);
         Navigator.push(context, animatedRoute(new HomePage(0)));
       } else if (_resultState == 2) {
         try {
-          // this is to avoid crashing the app if it can't pop the widget 
+          // this is to avoid crashing the app if it can't pop the widget
           if (Navigator.canPop(context)) {
             _ticker.stop();
             Navigator.pop(context);

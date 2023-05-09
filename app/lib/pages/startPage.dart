@@ -5,6 +5,7 @@ import 'package:Stylr/main.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'utilities.dart';
 import 'pages.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({super.key});
@@ -17,6 +18,20 @@ class _StartPageState extends State<StartPage> {
   @override
   bool finished_animation = false;
   bool finished_second_animation = false;
+  @override
+  void initState() {
+    readValue("apiToken", (String token) {
+      ping_api(token, (bool result) {
+        print("something");
+        if (result) {
+          api_token = token;
+          Navigator.push(context, animatedRoute(HomePage(0)));
+        }
+      });
+    });
+    super.initState();
+  }
+
   Widget build(BuildContext context) {
     if (!finished_animation) {
       return Container(
@@ -24,7 +39,8 @@ class _StartPageState extends State<StartPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            AnimatedTextKit(key: new GlobalKey(),
+            AnimatedTextKit(
+              key: new GlobalKey(),
               animatedTexts: [
                 TyperAnimatedText("Welcome back!",
                     speed: const Duration(milliseconds: 45),
@@ -117,7 +133,8 @@ class _StartPageState extends State<StartPage> {
                   child: TextButton(
                     onPressed: () {
                       // ignore: prefer_const_constructors
-                      Navigator.push(context, animatedRoute(new LoginPage(key: GlobalKey())));
+                      Navigator.push(context,
+                          animatedRoute(new LoginPage(key: GlobalKey())));
                     },
                     child: IgnorePointer(
                         child: Text(

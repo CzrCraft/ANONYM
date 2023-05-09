@@ -39,6 +39,7 @@ dependencies:
   flutter_animate: ^4.1.1+1
   http: ^0.13.5
   auto_size_text: ^3.0.0
+  shared_preferences: ^2.1.0
 
 dev_dependencies:
   flutter_test:

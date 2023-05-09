@@ -31,6 +31,8 @@ function doneReading(){
                 configs["server_settings"]["upload_dir"],
                 configs["printify"]["token"]);
     server.get('/api', (req,res)=>{res.send("Base dir of Stylr's API")})
+    server.get('/api/ping', (req,res)=>{routes.auth_handler(req, res, routes.ping)})
+    
     //          user handling
     server.get("/api/user/signup", (req,res) => {routes.create_user(req, res)})
     server.get("/api/user/login", (req,res) => {routes.login(req, res)})
@@ -38,9 +40,11 @@ function doneReading(){
     server.post("/api/files/upload", (req,res) => {routes.auth_handler(req, res, routes.upload)})
     server.get("/api/files/:file_id", (req,res) => {routes.get_file(req, res)})
     //          catalog handling
-    server.get("/api/catalog/blueprints", (req,res) => {routes.get_blueprints(req, res)})
+    server.get("/api/catalog/blueprints", (req, res) => {routes.auth_handler(req, res, routes.get_blueprints)})
+    server.get("/api/catalog/blueprint", (req,res) => {routes.auth_handler(req, res, routes.get_blueprint)})
     server.post("/api/catalog/designs", (req,res) => {routes.auth_handler(req, res, routes.upload_design)})
     server.get("/api/catalog/designs", (req,res) => {routes.auth_handler(req, res, routes.get_designs)})
+    server.get("/api/catalog/get_variants", (req,res) => {routes.auth_handler(req, res, routes.get_variants)})
     
 }
 fs.readFile("config.json", "utf8", (err, jsonString) => {

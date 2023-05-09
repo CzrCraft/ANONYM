@@ -6,6 +6,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'utilities.dart';
 import 'pages.dart';
 import 'package:flutter/scheduler.dart';
+
 int _resultState =
     0; //using local variable because it would be way to complicated to use GlobalKey's
 
@@ -20,8 +21,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   // using a ticker to check every frame if login() func has returned a result
   // and if so act accordingly
   @override
-  int animationStage = 0; // i use this for keeping track at what stage of the "animation" the widget is currently at
-  String username = ""; // ex: when you input your username its at stage 2, etc..
+  int animationStage =
+      0; // i use this for keeping track at what stage of the "animation" the widget is currently at
+  String username =
+      ""; // ex: when you input your username its at stage 2, etc..
   String password = "";
   late Ticker _ticker;
   @override
@@ -34,6 +37,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     _ticker = super.createTicker((Duration elapsedTime) {
       if (_resultState == 1) {
         _ticker.stop();
+        writeValue("apiToken", api_token);
         Navigator.push(context, animatedRoute(new HomePage(0)));
       } else if (_resultState == 2) {
         try {

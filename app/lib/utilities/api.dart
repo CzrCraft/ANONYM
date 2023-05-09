@@ -37,10 +37,25 @@ Future signup(String username, String password) async {
 }
 
 Future get_blueprints(String security_token) async {
-  return await http.get(
-    Uri.parse(_apiIP + "/api/catalog/blueprints"),
-    headers: {
-      "Authorization": "Bearer $security_token"
-    }
-  );
+  return await http.get(Uri.parse(_apiIP + "/api/catalog/blueprints"),
+      headers: {"Authorization": "Bearer $security_token"});
+}
+
+Future get_blueprint(String security_token, String printify_id) async {
+  return await http.get(Uri.parse(_apiIP + "/api/catalog/blueprint"), headers: {
+    "Authorization": "Bearer $security_token",
+    "printify_id": printify_id
+  });
+}
+
+void ping_api(String security_token, Function callback) async {
+  http.Response result =
+      await http.get(Uri.parse(_apiIP + "/api/ping"), headers: {
+    "Authorization": "Bearer $security_token",
+  });
+  if (result.statusCode == 200) {
+    callback(true);
+  } else {
+    callback(false);
+  }
 }

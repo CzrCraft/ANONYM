@@ -6,6 +6,7 @@ const token_gen = require("random-token")
 const crypto = require("crypto")
 const path = require('path');
 const https = require('https');
+const got = require('got');
 
 let security_token_valability_s = 0;
 let uploadDir = "/";
@@ -263,6 +264,66 @@ module.exports = {
             console.log(err);
         }
     },
+
+    get_blueprint: async function (req, response, token) {
+        try{
+            let result = "";
+            await https.request({
+                host: "api.printify.com", 
+                method: "GET", 
+                path: "/v1/catalog/blueprints/" + req.headers.printify_id+ ".json", 
+                headers: {
+                    "Authorization": "Bearer " + printifyApiToken
+                }},
+                async (res) =>  {
+                    await res.on("data", function(chunk) {
+                        result += chunk;
+                    });
+                    res.on("end", function(){
+                        response.statusCode = 200;
+                        response.send(result);
+                    })
+                }).end();
+        }catch(err){
+            response.send(500);
+            console.log(err);
+        }
+    },
+    get_variants: async function (req, response, token) {
+        try {
+            const httpResponse1 = await got.get("https://api.printify.com/v1/catalog/blueprints/" + req.headers.printify_id + "/print_providers.json", {headers: { "Authorization": "Bearer " + printifyApiToken }})
+            let parsedResult = await JSON.parse(httpResponse1.body);
+            let resultingResponse = [];
+            // get every print provider's variants and compile them into one big list.
+            for(const element of parsedResult){
+                const httpResponse2 = await got.get("https://api.printify.com/v1/catalog/blueprints/" + req.headers.printify_id + "/print_providers/" + element["id"] + "/variants.json", { headers: { "Authorization": "Bearer " + printifyApiToken, "show-out-of-stock": "0"} })
+                let parsedResult2 = await JSON.parse(httpResponse2.body);
+                for(const element2 of parsedResult2["variants"]) {
+                    // response is gonna be [id, color, size, frontHeight, frontWidth, backHeight, backWidth]
+                    let frontPlaceholder;
+                    let backPlaceholder;
+                    // get the front and back max height and width for printing
+                    for(const element3 of element2["placeholders"]){
+                        if (element3["position"] == "front") {
+                            frontPlaceholder = element3
+                        } else if(element3["position"] == "back"){
+                            backPlaceholder = element3;
+                        }
+                    }
+                    console.log([element2["id"], element2["options"]["color"], element2["options"]["size"], frontPlaceholder["height"], frontPlaceholder["width"], backPlaceholder["height"], backPlaceholder["width"]])
+                    await resultingResponse.push([element2["id"], element2["options"]["color"], element2["options"]["size"], frontPlaceholder["height"], frontPlaceholder["width"], backPlaceholder["height"], backPlaceholder["width"]])
+                };
+            };
+            console.log(resultingResponse);
+            response.status(200).send(resultingResponse);
+        } catch (err) {
+            console.log(err);
+        }
+    },
+
+    ping: async function (req, res, token) {
+        res.sendStatus(200);
+    }
 }
 
 

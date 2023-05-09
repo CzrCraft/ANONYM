@@ -5,6 +5,34 @@ import 'package:http/http.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'dart:convert';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'pages.dart';
+
+class _EditPage extends StatefulWidget {
+  const _EditPage({super.key});
+
+  @override
+  State<_EditPage> createState() => __EditPageState();
+}
+
+class __EditPageState extends State<_EditPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: primaryColor,
+      child: Column(
+        children: [
+          
+        ],
+      )
+    );
+  }
+}
+
+void _choseBlueprint(int printify_id, BuildContext context) async {
+  debugPrint("$printify_id");
+  debugPrint((await get_blueprint(api_token, printify_id.toString())).body);
+  Navigator.push(context, animatedRoute(const _EditPage()));
+}
 
 void _get_blueprints(Function callback) async {
   Response result = await get_blueprints(api_token);
@@ -44,13 +72,18 @@ class _DesignerPageState extends State<DesignerPage> {
   Widget childWidget = LoadingDots(
     lightMode: true,
   );
+
   @override
   void initState() {
     // get all the blueprints from the API, then arrange them into rows and the rows into the ListView
     // also precache the images
     _get_blueprints((List<Widget> widgetList) async {
       List<Widget> tempChildWidgets = List.empty(growable: true);
-      Widget tempWidget = Center(child: ListView(children: tempChildWidgets, shrinkWrap: true));
+      // ^ this is going to be the title after the animation is finnished
+      // it's a much cleaner solution to involve the title in the list view because
+      // putting a list view in other widgets is much harder
+      Widget tempWidget =
+          Center(child: ListView(children: tempChildWidgets, shrinkWrap: true));
       List<Widget> reuseableList = List.empty(growable: true);
       // using a reusable list to store widgets until the row count is met, then store those in the form of
       // a row inside the tempChildWidgets list
@@ -118,24 +151,33 @@ class _DesignerPageState extends State<DesignerPage> {
               },
             ));
       case 1:
-        return Center(
-          child:Column(
-            children: [
-              Positioned(
-                top: getFromPercent("vertical", 6, context),
-                left: getFromPercent("horizontal", 6, context), 
-                child: Text("First you need to pick a blueprint to edit",
-                    style: TextStyle(
-                    fontSize: getFromPercent("horizontal", 5, context),
-                    fontWeight: FontWeight.w700,  
-                    color: primaryColor,
-                    decoration: TextDecoration.none,
-                    backgroundColor: Colors.transparent)
-                  ),
-              ),
-              Container(child: childWidget)
-            ]
-          )
+        return Stack(
+          children: [
+            childWidget,
+            Positioned(
+                top: getFromPercent("vertical", 5.3, context),
+                left: getFromPercent("horizontal", 4.5, context),
+                child: Container(
+                    height: getFromPercent("vertical", 4, context),
+                    width: getFromPercent("horizontal", 92, context),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: secondaryColor,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      color: secondaryColor,
+                    ),
+                    child: Center(
+                        child: Text(
+                            "First you need to pick a blueprint to edit",
+                            style: TextStyle(
+                                fontSize:
+                                    getFromPercent("horizontal", 5, context),
+                                fontWeight: FontWeight.w700,
+                                color: primaryColor,
+                                decoration: TextDecoration.none,
+                                backgroundColor: Colors.transparent)))))
+          ],
         );
     }
     return childWidget;
@@ -173,39 +215,43 @@ class __BlueprintWidgetState extends State<_BlueprintWidget> {
   }
 
   Widget build(BuildContext context) {
-    return Container(
-      height: getFromPercent("horizontal", 45, context),
-      width: getFromPercent("vertical", 15, context),
-      decoration: BoxDecoration(
-          color: primaryColor, borderRadius: BorderRadius.circular(12)),
-      child: SizedBox(
-        height: getFromPercent("horizontal", 40, context),
-        width: getFromPercent("vertical", 15, context),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-                padding: EdgeInsets.only(
-                    top: getFromPercent("vertical", 1.1, context)),
-                child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: widget.theImage)),
-            Padding(
-              padding: EdgeInsets.only(
-                  bottom: getFromPercent("vertical", 2, context)),
-              child: AutoSizeText(widget.title,
-                  style: TextStyle(
-                      color: secondaryColor,
-                      fontWeight: FontWeight.w800,
-                      fontSize: getFromPercent("horizontal", 10, context)),
-                  maxLines: 1,
-                  maxFontSize: 30,
-                  minFontSize: 10),
-            )
-          ],
-        ),
-      ),
-    );
+    return GestureDetector(
+        onTap: () {
+          _choseBlueprint(widget.printify_id, context);
+        },
+        child: Container(
+          height: getFromPercent("horizontal", 45, context),
+          width: getFromPercent("vertical", 15, context),
+          decoration: BoxDecoration(
+              color: primaryColor, borderRadius: BorderRadius.circular(12)),
+          child: SizedBox(
+            height: getFromPercent("horizontal", 40, context),
+            width: getFromPercent("vertical", 15, context),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                    padding: EdgeInsets.only(
+                        top: getFromPercent("vertical", 1.1, context)),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: widget.theImage)),
+                Padding(
+                  padding: EdgeInsets.only(
+                      bottom: getFromPercent("vertical", 2, context)),
+                  child: AutoSizeText(widget.title,
+                      style: TextStyle(
+                          color: secondaryColor,
+                          fontWeight: FontWeight.w800,
+                          fontSize: getFromPercent("horizontal", 10, context)),
+                      maxLines: 1,
+                      maxFontSize: 30,
+                      minFontSize: 10),
+                )
+              ],
+            ),
+          ),
+        ));
   }
 }
