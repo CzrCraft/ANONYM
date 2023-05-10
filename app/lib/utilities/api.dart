@@ -59,3 +59,16 @@ void ping_api(String security_token, Function callback) async {
     callback(false);
   }
 }
+
+void get_variants(String security_token, String blueprintID, Function callback) async {
+  http.Response result =
+      await http.get(Uri.parse(_apiIP + "/api/catalog/get_variants"), headers: {
+    "Authorization": "Bearer $security_token",
+    "printify_id": blueprintID,
+  });
+  if (result.statusCode == 200) {
+    callback(result.body);
+  } else {
+    callback("");
+  }
+}

@@ -193,11 +193,18 @@ module.exports = {
             console.log(err);
         }
     },
-    auth_handler: async function(req, res, route_func){
-        if(await checkToken(req.headers.authorization.split(" ")[1])){
-            route_func(req, res, req.headers.authorization.split(" ")[1]);
-        }else{
-            res.status(400).send("INVALID TOKEN");
+    auth_handler: async function (req, res, route_func) {
+        try {
+            if (await checkToken(req.headers.authorization.split(" ")[1])) {
+                console.log("Token was successfully verified: " + req.headers.authorization.split(" ")[1])
+                route_func(req, res, req.headers.authorization.split(" ")[1]);
+            } else {
+                console.log("Token was not successfully verified: " + req.headers.authorization.split(" ")[1])
+                res.status(400).send("INVALID TOKEN");
+            }
+        } catch (err) {
+            console.log(err);
+            res.sendStatus(400);
         }
     },
 
@@ -299,22 +306,39 @@ module.exports = {
                 const httpResponse2 = await got.get("https://api.printify.com/v1/catalog/blueprints/" + req.headers.printify_id + "/print_providers/" + element["id"] + "/variants.json", { headers: { "Authorization": "Bearer " + printifyApiToken, "show-out-of-stock": "0"} })
                 let parsedResult2 = await JSON.parse(httpResponse2.body);
                 for(const element2 of parsedResult2["variants"]) {
-                    // response is gonna be [id, color, size, frontHeight, frontWidth, backHeight, backWidth]
+                    // response is gonna be [id, color, size, canPrintOnTheFront, canPrintOnTheBack, frontHeight, frontWidth, backHeight, backWidth]
+                    // the canPrintOnTheFront//TheBack are gonna be booleans
                     let frontPlaceholder;
                     let backPlaceholder;
+                    // check if you can print on the front and back
+                    let doesFront = false;
+                    let doesBack = false;
+
                     // get the front and back max height and width for printing
                     for(const element3 of element2["placeholders"]){
                         if (element3["position"] == "front") {
                             frontPlaceholder = element3
+                            doesFront = true
                         } else if(element3["position"] == "back"){
                             backPlaceholder = element3;
+                            doesBack = true
                         }
                     }
-                    console.log([element2["id"], element2["options"]["color"], element2["options"]["size"], frontPlaceholder["height"], frontPlaceholder["width"], backPlaceholder["height"], backPlaceholder["width"]])
-                    await resultingResponse.push([element2["id"], element2["options"]["color"], element2["options"]["size"], frontPlaceholder["height"], frontPlaceholder["width"], backPlaceholder["height"], backPlaceholder["width"]])
+                    if (doesFront) {
+                        if (doesBack) {
+                            await resultingResponse.push([element2["id"], element2["options"]["color"], element2["options"]["size"], true, true, frontPlaceholder["height"], frontPlaceholder["width"], backPlaceholder["height"], backPlaceholder["width"]])
+                        } else {
+                            await resultingResponse.push([element2["id"], element2["options"]["color"], element2["options"]["size"], true, false, frontPlaceholder["height"], frontPlaceholder["width"]])
+                        }
+                    } else {
+                        if (doesBack) {
+                            await resultingResponse.push([element2["id"], element2["options"]["color"], element2["options"]["size"], false, true, backPlaceholder["height"], backPlaceholder["width"]])
+                        } else {
+                            await resultingResponse.push([element2["id"], element2["options"]["color"], element2["options"]["size"], false, false])
+                        }
+                    }
                 };
             };
-            console.log(resultingResponse);
             response.status(200).send(resultingResponse);
         } catch (err) {
             console.log(err);
