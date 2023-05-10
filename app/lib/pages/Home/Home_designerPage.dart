@@ -9,24 +9,65 @@ import 'dart:convert';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'pages.dart';
 
+// dirty solution to get the images to scale with the screen
+// not proud of it, but it'l work
+late BuildContext _listViewContext;
+late String _selectedSize;
+late String _selectedColor;
+late List<dynamic> _variantsList;
 class _EditPage extends StatefulWidget {
-  _EditPage({super.key, this.blueprintID = 0});
-  int blueprintID;
+  const _EditPage({super.key});
+
   @override
   State<_EditPage> createState() => __EditPageState();
 }
 
 class __EditPageState extends State<_EditPage> {
   @override
-  List<String> dropdownItems = ["1", "2"];
-  String dropdownValue = "1";
+  Widget build(BuildContext context) {
+    print(_selectedColor);
+    print(_selectedSize);
+    return Container(
+      color: secondaryColor,
+    );
+  }
+}
+
+class _ChoseVariantPage extends StatefulWidget {
+  _ChoseVariantPage({super.key, this.blueprintID = 0});
+  int blueprintID;
   @override
+  State<_ChoseVariantPage> createState() => __ChoseVariantPageState();
+}
+
+class __ChoseVariantPageState extends State<_ChoseVariantPage> {
+  @override
+  List<String> colorDropdownItems = List<String>.empty(growable: true);
+  late String colorDropdownValue;
+  List<String> sizeDropdownItems = List<String>.empty(growable: true);
+  late String sizeDropdownValue;
+
+  @override
+  int finishedLoading = 0;
   void initState() {
-    get_variants(api_token, widget.blueprintID.toString(), (String res) {
+    get_variants(api_token, widget.blueprintID.toString(), (String res) async {
       if (res != "") {
-        debugPrint(res);
         List<dynamic> variantList = jsonDecode(res);
-        debugPrint(variantList.toString());
+        _variantsList = variantList;
+        await Future.forEach(variantList, (value) async {
+          if (!colorDropdownItems.contains(value[1])) {
+            colorDropdownItems.add(value[1]);
+          }
+          if (!sizeDropdownItems.contains(value[2])) {
+            sizeDropdownItems.add(value[2]);
+          }
+          debugPrint(value.toString());
+        });
+        colorDropdownValue = colorDropdownItems.first;
+        sizeDropdownValue = sizeDropdownItems.first;
+        setState(() {
+          finishedLoading = 1;
+        });
       } else {
         debugPrint("Res == ''");
       }
@@ -35,50 +76,120 @@ class __EditPageState extends State<_EditPage> {
   }
 
   Widget build(BuildContext context) {
-    return Material(child: Container(
-        color: primaryColor,
-        child: Center(
+    if (finishedLoading == 0) {
+      return LoadingDots(
+        lightMode: false,
+      );
+    } else {
+      return Material(
           child: Container(
-          height: getFromPercent("vertical", 40, context),
-          width: getFromPercent("horizontal", 80, context),
-          decoration: BoxDecoration(
-              color: secondaryColor, borderRadius: BorderRadius.circular(10)),
-          child: Column(
-            children: [
-              Text(
-                "Pick a color",
-                style: TextStyle(
-                    color: primaryColor,
-                    decoration: TextDecoration.none,
-                    fontSize: getFromPercent("horizontal", 10, context)),
+              color: primaryColor,
+              child: Center(
+                  child: Container(
+                height: getFromPercent("vertical", 25, context),
+                width: getFromPercent("horizontal", 80, context),
+                decoration: BoxDecoration(
+                    color: secondaryColor,
+                    borderRadius: BorderRadius.circular(10)),
+                child: Column(
+                  children: [
+                    Text(
+                      "Pick a color and size",
+                      style: TextStyle(
+                          color: primaryColor,
+                          fontWeight: FontWeight.w500,
+                          decoration: TextDecoration.none,
+                          fontSize: getFromPercent("horizontal", 8, context)),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: primaryColor,
+                          borderRadius: BorderRadius.circular(12)),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 5),
+                          child: DropdownButton<String>(
+                            items: colorDropdownItems
+                                .map<DropdownMenuItem<String>>(
+                                    (String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value,
+                                    style: TextStyle(
+                                        color: secondaryColor,
+                                        fontWeight: FontWeight.w600)),
+                              );
+                            }).toList(),
+                            value: colorDropdownValue,
+                            underline: SizedBox(),
+                            dropdownColor: primaryColor,
+                            iconEnabledColor: secondaryColor,
+                            onChanged: (String? value) {
+                              setState(() {
+                                colorDropdownValue = value!;
+                              });
+                              debugPrint(value);
+                            },
+                          )
+                        )
+                      )
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: primaryColor,
+                          borderRadius: BorderRadius.circular(12)),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 5),
+                          child: DropdownButton<String>(
+                            items: sizeDropdownItems
+                                .map<DropdownMenuItem<String>>(
+                                    (String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value,
+                                    style: TextStyle(
+                                        color: secondaryColor,
+                                        fontWeight: FontWeight.w600)),
+                              );
+                            }).toList(),
+                            value: sizeDropdownValue,
+                            underline: SizedBox(),
+                            dropdownColor: primaryColor,
+                            iconEnabledColor: secondaryColor,
+                            onChanged: (String? value) {
+                              setState(() {
+                                sizeDropdownValue = value!;
+                              });
+                            },
+                            )))),
+                  TextButton(
+                    onPressed: (){
+                      _selectedColor = colorDropdownValue;
+                      _selectedSize = sizeDropdownValue;
+                      Navigator.push(context,animatedRoute(_EditPage()));
+                    }, 
+                    style: TextButton.styleFrom(
+                      backgroundColor: primaryColor,
+                    ),
+                    child: Text("Next", style: TextStyle(color: secondaryColor, fontWeight: FontWeight.w700, fontSize: getFromPercent("horizontal", 5, context)))
+                  )
+                ],
               ),
-              DropdownButton<String>(
-                items:
-                    dropdownItems.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                value: dropdownValue,
-                onChanged: (String? value) {
-                  debugPrint(value);
-                },
-              )
-            ],
-          ),
+            )
+          )
         )
-      )
-    ));
+      );
+    }
   }
 }
 
 void _choseBlueprint(int printifyId, BuildContext context) async {
-  debugPrint("$printifyId");
-  debugPrint((await get_blueprint(api_token, printifyId.toString())).body);
   Navigator.push(
       context,
-      animatedRoute(_EditPage(
+      animatedRoute(_ChoseVariantPage(
         blueprintID: printifyId,
       )));
 }
@@ -128,7 +239,7 @@ class _DesignerPageState extends State<DesignerPage> {
     // also precache the images
     _get_blueprints((List<Widget> widgetList) async {
       List<Widget> tempChildWidgets = List.empty(growable: true);
-      // ^ this is going to be the title after the animation is finnished
+      // ^ this is going to be the title after the animation is finished
       // it's a much cleaner solution to involve the title in the list view because
       // putting a list view in other widgets is much harder
       Widget tempWidget =
@@ -165,6 +276,7 @@ class _DesignerPageState extends State<DesignerPage> {
   int animationState = 0;
   bool isDoneTyping = false;
   Widget build(BuildContext context) {
+    _listViewContext = context;
     switch (animationState) {
       case 0:
         return AnimatedPositioned(
@@ -248,9 +360,9 @@ class _BlueprintWidget extends StatefulWidget {
   late Image theImage = Image.network(
     image_link,
     fit: BoxFit.fill,
-    width: 120,
-    cacheWidth: 100,
-    cacheHeight: 100,
+    width: getFromPercent("horizontal", 29, _listViewContext),
+    cacheWidth: 200,
+    cacheHeight: 200,
   );
   @override
   State<_BlueprintWidget> createState() => __BlueprintWidgetState();
@@ -258,7 +370,7 @@ class _BlueprintWidget extends StatefulWidget {
 
 class __BlueprintWidgetState extends State<_BlueprintWidget> {
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     precacheImage(widget.theImage.image, context);
     super.didChangeDependencies();
   }
