@@ -3,6 +3,7 @@ cd ..
 echo        -Installing API depenencies..-
 cd api
 call npm install
+call npm install nodemon
 cd ..
 echo        -Install APP/Flutter dependencies-
 cd App
