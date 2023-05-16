@@ -49,3 +49,11 @@ Requirements:
  * **Flutter**
 
 Before running/building it run "flutter pub get" to install all the required packages.
+
+
+# Setting up
+
+For easy installation of the build env use these commands in the base dir of the project:
+
+    cd utillities
+    setup.bag
