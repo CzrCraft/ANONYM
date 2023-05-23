@@ -110,3 +110,25 @@ Widget getImageFromApi(String imageID, double height, double width, String secur
     return Image.network(apiIP + "/api/files/" + imageID, width: width, height: height, fit: BoxFit.cover, key: key);
   }
 }
+
+void likeDesign(String designID, String securityToken, Function callback) async {
+  var request = await http.post(Uri.parse(_apiIP + "/api/catalog/design/popularity/" + designID), headers: {
+    "Authorization": "Bearer $securityToken",
+  });
+  if(request.statusCode == 200){
+    callback(true);
+  }else{
+    callback(false);
+  }
+}
+
+void dislikeDesign(String designID, String securityToken, Function callback) async {
+  var request = await http.delete(Uri.parse(_apiIP + "/api/catalog/design/popularity/" + designID), headers: {
+    "Authorization": "Bearer $securityToken",
+  });
+  if(request.statusCode == 200){
+    callback(true);
+  }else{
+    callback(false);
+  }
+}

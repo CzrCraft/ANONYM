@@ -4,14 +4,33 @@ import 'package:Stylr/main.dart';
 import 'package:flutter/material.dart';
 import '../utilities.dart';
 
-class _DesignWidget extends StatelessWidget {
-  _DesignWidget({required this.name, required this.author, required this.like_count, required this.thumbnailId, super.key});
+class _DesignWidget extends StatefulWidget {
+  _DesignWidget({required this.designID, required this.name, required this.author, required this.like_count, required this.thumbnailId, this.isLiked = false, this.isDisliked = false, super.key});
   String name;
   String author;
+  String designID;
   int like_count;
+  bool isLiked = false;
+  bool isDisliked = false;
   String thumbnailId;
   @override
+  State<_DesignWidget> createState() => __DesignWidgetState();
+}
+
+class __DesignWidgetState extends State<_DesignWidget> {
+  @override
   Widget build(BuildContext context) {
+    Widget iconWidget1;
+    Widget iconWidget2;
+    if(widget.isLiked){
+      iconWidget1 = Icon(Icons.thumb_up, color: primaryColor);
+    }else{
+      if(widget.isDisliked){
+        iconWidget1 = Icon(Icons.thumb_up_alt_outlined, color: primaryColor);
+      }else{
+        iconWidget1 = Icon(Icons.thumb_up_alt_outlined, color: primaryColor);
+      }
+    }
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: getFromPercent("horizontal", 1.2, context), vertical: getFromPercent("vertical", 1, context)),
       child: Container(
@@ -27,7 +46,7 @@ class _DesignWidget extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
-                child: getImageFromApi(thumbnailId, getFromPercent("vertical", 28, context), getFromPercent("horizontal", 38, context), api_token),
+                child: getImageFromApi(widget.thumbnailId, getFromPercent("vertical", 28, context), getFromPercent("horizontal", 38, context), api_token),
               ),
               Expanded(
                 child: Center(
@@ -38,7 +57,7 @@ class _DesignWidget extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.only(top: getFromPercent("vertical", 1, context)),
                         child: AutoSizeText(
-                          name, 
+                          widget.name, 
                           style: TextStyle(backgroundColor: Colors.transparent, color: primaryColor, fontWeight: FontWeight.w700, fontSize: 25),
                           minFontSize: 13,
                           maxFontSize: 25,
@@ -48,7 +67,7 @@ class _DesignWidget extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.only(top: getFromPercent("vertical", .1, context)),
                         child: AutoSizeText(
-                          author, 
+                          widget.author, 
                           style: TextStyle(backgroundColor: Colors.transparent, color: primaryColor, fontWeight: FontWeight.w700, fontSize: 18),
                           minFontSize: 13,
                           maxFontSize: 15,
@@ -56,18 +75,45 @@ class _DesignWidget extends StatelessWidget {
                         )
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: getFromPercent("vertical", 3, context)),
+                        padding: EdgeInsets.only(top: getFromPercent("vertical", 13, context), right: getFromPercent("horizontal", 6, context)),
                         child: Center(
                           child: ButtonBar(
                             children: [
-                              Padding(
-                                padding: EdgeInsets.only(right: getFromPercent("horizontal", 5, context)),
-                                child: Icon(Icons.thumb_up, color: primaryColor)
+                              TextButton(
+                                child: iconWidget1, 
+                                onPressed: (){
+                                  if(widget.isLiked){
+                                    dislikeDesign(widget.designID, api_token, (bool result){
+                                      if(result){
+                                        setState(() {
+                                          widget.isLiked = false;
+                                        });
+                                      }
+                                    });
+                                  }else{
+                                    likeDesign(widget.designID, api_token, (bool result){
+                                      if(result){
+                                        setState(() {
+                                          widget.isLiked = true;
+                                          
+                                        });
+                                      }
+                                    });
+                                  }
+                                },
                               ),
-                              Padding(
-                                padding: EdgeInsets.only(right: getFromPercent("horizontal", 14.5, context)),
-                                child: Icon(Icons.thumb_down, color: primaryColor)
-                              ),
+                              Center(
+                                child: ElevatedButton(
+                                  child: Text("View"),
+                                  onPressed: (){
+                                    print("tapped");
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: primaryColor,
+                                    shadowColor: Colors.transparent,
+                                  )
+                                )
+                              )
                             ],
                           )
                         )
@@ -105,7 +151,9 @@ class _CataloguePageState extends State<CataloguePage> {
           jsonApiData.forEach((design) {
             String designName = "";
             String designAuthor = "";
+            String designID = "";
             String thumbnailId = "";
+            bool isLiked = false;
             int likeCount = 0;
             Map<String, dynamic> designFeatures;
             design.forEach((key, value){
@@ -125,11 +173,19 @@ class _CataloguePageState extends State<CataloguePage> {
                 case "thumbnail_id":
                   thumbnailId = value;
                   break;
+                case "design_id":
+                  designID = value;
+                  break;
+                case "liked_by":
+                  if(value.contains("," + username)){
+                    isLiked = true;
+                  }
+                  break;
               }
             });
+            designList.add(_DesignWidget(name: designName, author: designAuthor, like_count: likeCount, thumbnailId: thumbnailId, isLiked: isLiked,designID: designID,));
           },);
-          designList.add(_DesignWidget(name: "testName", author: "testAuthor", like_count: 0, thumbnailId: "9bvd2KSW8F9AmvNPHcVAJhc0NXGvrrlCwQ2fj06xZmGGYpnXHy",));
-          return Center(child: Column(
+          return Center(child: ListView(
             children: [
               Padding(
                 padding: EdgeInsets.only(top: getFromPercent("vertical", 3, context), left: getFromPercent("horizontal", 3, context), right: getFromPercent("horizontal", 3, context)),
@@ -161,7 +217,7 @@ class _CataloguePageState extends State<CataloguePage> {
                   },
                 ),
               ),
-              Column(children:designList),
+              Column(children: designList),
             ],
           ));
         }else{

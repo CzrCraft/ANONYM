@@ -18,42 +18,170 @@ late BuildContext _listViewContext;
 late String _selectedSize;
 late String _selectedColor;
 late List<dynamic> _variantsList;
+late int _maxFrontHeight;
+late int _maxFrontWidth;
 
 GlobalKey _editPageKey = GlobalKey();
 
-class _shirtImage extends StatelessWidget {
+List<Widget> _frontShirtImages = List.empty(growable: true);
+List<GlobalKey<__shirtImageState>> _frontShirtImageKeys = List.empty(growable: true);
+List<Widget> _backShirtImages = List.empty(growable: true);
+List<GlobalKey<__shirtImageState>> _backShirtImageKeys = List.empty(growable: true);
+
+void _updateSelectedImage(Widget img, bool frontImages){
+  if(frontImages){
+    _frontShirtImageKeys.forEach((GlobalKey<__shirtImageState> element) {
+      if(element.currentWidget == img){
+        element.currentState?.select();
+      }else{
+        element.currentState?.deselect();
+      }
+    });
+  }
+}
+
+void _removeImage(Widget image, bool frontImages){
+  if(frontImages){
+    _frontShirtImages.remove(image);
+    _frontShirtImageKeys.remove(image.key);
+    _editPageKey.currentState?.setState(() {
+      
+    });
+  }
+}
+
+class _shirtImage extends StatefulWidget {
   _shirtImage(this.imgX, this.imgY, this.imgId, this.image,{super.key});
   double imgX;
   double imgY;
   String imgId;
   Widget image;
+  bool selected = false;
   @override
+  State<_shirtImage> createState() => __shirtImageState();
+}
+
+class __shirtImageState extends State<_shirtImage> {
+  @override
+
+
+  void _onHorizontalDragStartHandler(DragStartDetails details) {
+    setState(() {
+      widget.imgX = details.globalPosition.dx.floorToDouble();
+      widget.imgY = getFromPercent("vertical", 45, context) - details.globalPosition.dy.floorToDouble();
+    });
+  }
+
+  /// Track starting point of a vertical gesture
+  void _onVerticalDragStartHandler(DragStartDetails details) {
+    setState(() {
+      widget.imgX = details.globalPosition.dx.floorToDouble();
+      widget.imgY = getFromPercent("vertical", 45, context) - details.globalPosition.dy.floorToDouble();
+    });
+  }
+
+  void _onDragUpdateHandler(DragUpdateDetails details) {
+    setState(() {
+      widget.imgX = details.globalPosition.dx.floorToDouble();
+      widget.imgY = getFromPercent("vertical", 45, context) - details.globalPosition.dy.floorToDouble();
+    });
+  }
+
+  /// Track current point of a gesture
+  void _onHorizontalDragUpdateHandler(DragUpdateDetails details) {
+    setState(() {
+      widget.imgX = details.globalPosition.dx.floorToDouble();
+      widget.imgY = getFromPercent("vertical", 45, context) - details.globalPosition.dy.floorToDouble();
+    });
+  }
+
+  /// Track current point of a gesture
+  void _onVerticalDragUpdateHandler(DragUpdateDetails details) {
+    setState(() {
+      widget.imgX = details.globalPosition.dx.floorToDouble();
+      widget.imgY = getFromPercent("vertical", 45, context) - details.globalPosition.dy.floorToDouble();
+    });
+  }
+
   Widget build(BuildContext context) {
-    return Positioned(
-      bottom: imgY,
-      left: imgX,
-      child: GestureDetector(
-        onTap: (){
-          print("tapped"); 
-        },
-        behavior: HitTestBehavior.translucent,
-        child: AbsorbPointer(child: image),
-      ),
-    );
+    debugPrint(widget.imgX.toString());
+    debugPrint(widget.imgY.toString());
+    if(!widget.selected){
+      return Positioned(
+        bottom: widget.imgY,
+        left: widget.imgX,
+        child: GestureDetector(
+          onTap: (){
+            setState(() {
+              _updateSelectedImage(widget , true);
+            });
+          },
+          behavior: HitTestBehavior.translucent,
+          child: widget.image,
+        ),
+      );
+    }else{
+      return Positioned(
+        bottom: widget.imgY,
+        left: widget.imgX,
+        child: GestureDetector(
+          onHorizontalDragStart: _onHorizontalDragStartHandler,
+          onVerticalDragStart: _onVerticalDragStartHandler,
+          onHorizontalDragUpdate: _onDragUpdateHandler,
+          onVerticalDragUpdate: _onDragUpdateHandler,
+          onLongPress: (){
+              setState(() {
+                _removeImage(widget, true);
+                debugPrint("e");
+              });
+          },
+          behavior: HitTestBehavior.translucent,
+          child: Container(
+            decoration: BoxDecoration(
+              color: primaryColor,
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(getFromPercent("horizontal", 1, context)),
+              child: widget.image,
+            ),
+          ),
+        ),
+      );
+    }
+  
+  }
+  void select(){
+    setState(() {
+      widget.selected = true;
+    });
+  }
+  void deselect(){
+    setState(() {
+      widget.selected = false;
+    });
+  }
+  String getID(){
+    return widget.imgId;
   }
 }
 
 class _EditPage extends StatefulWidget {
-  const _EditPage({super.key});
-
+  _EditPage({super.key});
   @override
   State<_EditPage> createState() => __EditPageState();
 }
 
 class __EditPageState extends State<_EditPage> {
   @override
-  List<Widget> frontShirtImages = List.empty(growable: true);
-  List<Widget> backShirtImages = List.empty(growable: true);
+
+  @override
+  void initState() {
+    _frontShirtImages.clear();
+    _backShirtImages.clear();
+    super.initState();
+  }
+
   Widget getImageToUse(String value, bool detectGestures, {key}){
     if(detectGestures){
       if(key != null){
@@ -69,16 +197,19 @@ class __EditPageState extends State<_EditPage> {
       }
     }
   }
+
   void pickedImage(String imageId){
     if(shirtSide == 0){
       setState(() {
-        GlobalKey tempKey = GlobalKey();
-        frontShirtImages.add(_shirtImage(getFromPercent("horizontal", 35, context), getFromPercent("vertical", 20, context), imageId, getImageToUse(imageId, false), key: tempKey));
+        GlobalKey<__shirtImageState> tempKey = GlobalKey();
+        _frontShirtImages.add(_shirtImage(getFromPercent("horizontal", 35, context), getFromPercent("vertical", 20, context), imageId, getImageToUse(imageId, false), key: tempKey));
+        _frontShirtImageKeys.add(tempKey);
       });
     }else if (shirtSide == 1){
       setState(() {
-        GlobalKey tempKey = GlobalKey();
-        backShirtImages.add(_shirtImage(0, 0, imageId, getImageToUse(imageId, false), key: tempKey));
+        GlobalKey<__shirtImageState> tempKey = GlobalKey();
+        _backShirtImages.add(_shirtImage(0, 0, imageId, getImageToUse(imageId, false), key: tempKey));
+        _backShirtImageKeys.add(tempKey);
       });
     }
   }
@@ -90,14 +221,14 @@ class __EditPageState extends State<_EditPage> {
     print(_selectedSize);
     List<Widget> tempList = List.empty(growable: true);
     if(shirtSide == 0){
-      tempList.addAll(frontShirtImages);
-      tempList.add(Image.asset('assets/graphics/shirt_front_no_bg.png'));
+      tempList.add(IgnorePointer(child: Image.asset('assets/graphics/shirt_front_no_bg.png')));
+      tempList.addAll(_frontShirtImages);
       shirtImage = Stack(
-        children: tempList,
-        clipBehavior: Clip.none
+        clipBehavior: Clip.antiAlias,
+        children: tempList
       );
     }else{
-      tempList.addAll(backShirtImages);
+      tempList.addAll(_backShirtImages);
       tempList.add(Image.asset('assets/graphics/shirt_back_no_bg.png'));
       shirtImage = Stack(
         children: tempList,
@@ -117,7 +248,7 @@ class __EditPageState extends State<_EditPage> {
                 color: secondaryColor,
                 borderRadius: BorderRadius.circular(7)
               ),
-              child: AbsorbPointer(child: shirtImage)
+              child: shirtImage
             ), 
           ),
           Padding(
@@ -142,21 +273,43 @@ class __EditPageState extends State<_EditPage> {
                   ],
                   views: [
                     Center(
-                      child: TextButton(
-                        child: Text("Upload an image", style: TextStyle(color: secondaryColor, fontSize: getFromPercent("horizontal", 5, context))),
-                        onPressed: ()async{
-                          FilePickerResult? result = await FilePicker.platform.pickFiles(
-                            type: FileType.image
-                          );
-                          if (result != null) {
-                            sendFileToApi(result.files.first.path!, api_token, (){
-                              setState(() {});
-                            });
-                          }
-                        },
-                        style: TextButton.styleFrom(
-                          backgroundColor: primaryColor
-                        ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          TextButton(
+                            child: Text("Upload an image", style: TextStyle(color: secondaryColor, fontSize: getFromPercent("horizontal", 5, context))),
+                            onPressed: ()async{
+                              FilePickerResult? result = await FilePicker.platform.pickFiles(
+                                type: FileType.image
+                              );
+                              if (result != null) {
+                                sendFileToApi(result.files.first.path!, api_token, (){
+                                  setState(() {});
+                                });
+                              }
+                            },
+                            style: TextButton.styleFrom(
+                              backgroundColor: primaryColor
+                            ),
+                          ),
+                          TextButton(
+                            child: Text("Publish your design", style: TextStyle(color: secondaryColor, fontSize: getFromPercent("horizontal", 8, context))),
+                            onPressed: ()async{
+                              FilePickerResult? result = await FilePicker.platform.pickFiles(
+                                type: FileType.image
+                              );
+                              if (result != null) {
+                                sendFileToApi(result.files.first.path!, api_token, (){
+                                  setState(() {});
+                                });
+                              }
+                            },
+                            style: TextButton.styleFrom(
+                              backgroundColor: primaryColor
+                            ),
+                          ),
+                        ]
                       )
                     ),
                     FutureBuilder(
@@ -238,15 +391,23 @@ class __ChoseVariantPageState extends State<_ChoseVariantPage> {
   late String colorDropdownValue;
   List<String> sizeDropdownItems = List<String>.empty(growable: true);
   late String sizeDropdownValue;
-
+  int maxFrontHeight = 1000000000;
+  int maxFrontWidth = 1000000000;
   @override
   int finishedLoading = 0;
   void initState() {
     get_variants(api_token, widget.blueprintID.toString(), (String res) async {
       if (res != "") {
+        // response is gonna be [id, color, size, canPrintOnTheFront, canPrintOnTheBack, frontHeight, frontWidth, backHeight, backWidth]
         List<dynamic> variantList = jsonDecode(res);
         _variantsList = variantList;
         await Future.forEach(variantList, (value) async {
+          if(value[6] < maxFrontHeight){
+            maxFrontHeight = value[6];
+          }
+          if(value[7] < maxFrontWidth){
+            maxFrontHeight = value[7];
+          }
           if (!colorDropdownItems.contains(value[1])) {
             colorDropdownItems.add(value[1]);
           }
@@ -260,6 +421,8 @@ class __ChoseVariantPageState extends State<_ChoseVariantPage> {
         setState(() {
           finishedLoading = 1;
         });
+        _maxFrontHeight = maxFrontHeight;
+        _maxFrontWidth = maxFrontWidth;
       } else {
         debugPrint("Res == ''");
       }
@@ -362,7 +525,7 @@ class __ChoseVariantPageState extends State<_ChoseVariantPage> {
                       _selectedColor = colorDropdownValue;
                       _selectedSize = sizeDropdownValue;
                       _editPageKey = GlobalKey();
-                      Navigator.push(context,animatedRoute(_EditPage(key: _editPageKey)));
+                      Navigator.push(context,animatedRoute(_EditPage(key: _editPageKey,)));
                     }, 
                     style: TextButton.styleFrom(
                       backgroundColor: primaryColor,
