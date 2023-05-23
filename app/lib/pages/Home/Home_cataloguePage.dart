@@ -95,7 +95,6 @@ class __DesignWidgetState extends State<_DesignWidget> {
                                       if(result){
                                         setState(() {
                                           widget.isLiked = true;
-                                          
                                         });
                                       }
                                     });
@@ -104,7 +103,7 @@ class __DesignWidgetState extends State<_DesignWidget> {
                               ),
                               Center(
                                 child: ElevatedButton(
-                                  child: Text("View"),
+                                  child: Text("View", style: TextStyle(color: secondaryColor)),
                                   onPressed: (){
                                     print("tapped");
                                   },

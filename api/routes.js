@@ -196,6 +196,7 @@ module.exports = {
     auth_handler: async function (req, res, route_func, route_name) {
         console.log("----------------------------");
         console.log("Verification attepmted for " + route_name);
+        console.log(req.headers);
         try {
             if (await checkToken(req.headers.authorization.split(" ")[1])) {
                 console.log("Token was successfully verified: " + req.headers.authorization.split(" ")[1])

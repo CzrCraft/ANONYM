@@ -91,8 +91,8 @@ void sendFileToApi(String filePath, String securityToken, Function callback) asy
 }
 
 Future getUsersFilesFromApi(String securityToken) async{
-  return await http.get(Uri.parse(_apiIP + "/api/files"), headers: {
-    "Authorization": "Bearer $securityToken",
+  return http.get(Uri.parse(_apiIP + "/api/files"), headers: {
+    "authorization": "Bearer $api_token",
   });
 }
 

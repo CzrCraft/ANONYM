@@ -7,8 +7,8 @@ import 'utilities.dart';
 import 'pages.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 GlobalKey RootWidgetKey = GlobalKey();
-Color primaryColor = Color.fromARGB(255, 0, 0, 0);
-Color secondaryColor = Color.fromARGB(255, 255, 255, 255);
+Color primaryColor = Color(0xFFFE6F27);
+Color secondaryColor = Color(0xFF2F2F2F);
 bool debugMode = true; // DEBUG MODE IS ONLY FOR DEVELOPMENT PORPOUSES AND NOT INTENDED TO BE ENABELD IN AN DEPLOYMENT ENV!
 String api_token = "";
 String username = "";

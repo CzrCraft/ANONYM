@@ -401,21 +401,45 @@ class __ChoseVariantPageState extends State<_ChoseVariantPage> {
         // response is gonna be [id, color, size, canPrintOnTheFront, canPrintOnTheBack, frontHeight, frontWidth, backHeight, backWidth]
         List<dynamic> variantList = jsonDecode(res);
         _variantsList = variantList;
-        await Future.forEach(variantList, (value) async {
-          if(value[6] < maxFrontHeight){
-            maxFrontHeight = value[6];
+        int maxIterations = _variantsList.length;
+        int _i = 0;
+        for(dynamic value in variantList){
+          if(_i < maxIterations){
+            if(value[5] < maxFrontHeight){
+              maxFrontHeight = value[5];
+            }
+            if(value[6] < maxFrontWidth){
+              maxFrontHeight = value[6];
+            }
+            if (!colorDropdownItems.contains(value[1])) {
+              colorDropdownItems.add(value[1]);
+            }
+            if (!sizeDropdownItems.contains(value[2])) {
+              sizeDropdownItems.add(value[2]);
+            }
+          }else{
+            
           }
-          if(value[7] < maxFrontWidth){
-            maxFrontHeight = value[7];
-          }
-          if (!colorDropdownItems.contains(value[1])) {
-            colorDropdownItems.add(value[1]);
-          }
-          if (!sizeDropdownItems.contains(value[2])) {
-            sizeDropdownItems.add(value[2]);
-          }
-          debugPrint(value.toString());
-        });
+        }
+        // await Future.forEach(variantList, (value) async {
+        //   if(_i < maxIterations){
+        //     if(value[6] < maxFrontHeight){
+        //       maxFrontHeight = value[6];
+        //     }
+        //     if(value[7] < maxFrontWidth){
+        //       maxFrontHeight = value[7];
+        //     }
+        //     if (!colorDropdownItems.contains(value[1])) {
+        //       colorDropdownItems.add(value[1]);
+        //     }
+        //     if (!sizeDropdownItems.contains(value[2])) {
+        //       sizeDropdownItems.add(value[2]);
+        //     }
+        //   }else{
+            
+        //   }
+        //   _i++;
+        // });
         colorDropdownValue = colorDropdownItems.first;
         sizeDropdownValue = sizeDropdownItems.first;
         setState(() {
