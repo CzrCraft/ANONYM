@@ -11,7 +11,17 @@ double getFromPercent(String type, double percent, BuildContext context) {
   } else if (type == "horizontal") {
     return MediaQuery.of(context).size.width * percent / 100;
   }
-  throw "incorrect getFromPercent parameters. Parameter structure is (String type: vertical/horizontal, int percent: 0 <-> 100, BuildContext context)";
+  throw "Incorrect getFromPercent parameters. Parameter structure is (String type: vertical/horizontal, input range: 0 <-> 100, BuildContext context)";
   return 0;
 }
-
+void setThemeColors(bool lightMode) async {
+  // if(lightMode){
+  //   primaryColor = _tempPrimaryColor;
+  //   secondaryColor = _tempSecondaryColor;
+  // }else{
+  //   secondaryColor = _tempPrimaryColor;
+  //   primaryColor = _tempSecondaryColor;
+  // }
+  // return;
+  //TODO: add code here
+}

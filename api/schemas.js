@@ -36,10 +36,15 @@ module.exports = {
     }),
     DesignSchema: mongoose.Schema({
         author: "string",
+        designName: "string",
+        thumbnail_id: "string",
         like_count: "number",
         print_provider_id: "string",
         blueprint_id: "string",
+        variant_id: "string",
         creation_date: "string",
-        properties: "string",
+        design_id: "string",
+        liked_by: "string",
+        properties: "map",
     }),
 }

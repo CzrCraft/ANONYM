@@ -44,8 +44,26 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "contained_tab_bar_view",
+      "rootUri": "file:///C:/Users/czrcr/AppData/Local/Pub/Cache/hosted/pub.dev/contained_tab_bar_view-0.8.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "container_tab_indicator",
+      "rootUri": "file:///C:/Users/czrcr/AppData/Local/Pub/Cache/hosted/pub.dev/container_tab_indicator-0.3.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "cupertino_icons",
       "rootUri": "file:///C:/Users/czrcr/AppData/Local/Pub/Cache/hosted/pub.dev/cupertino_icons-1.0.5",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "draggable_widget",
+      "rootUri": "file:///C:/Users/czrcr/AppData/Local/Pub/Cache/hosted/pub.dev/draggable_widget-2.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -68,6 +86,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "file_picker",
+      "rootUri": "file:///C:/Users/czrcr/AppData/Local/Pub/Cache/hosted/pub.dev/file_picker-5.3.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "flutter",
       "rootUri": "file:///C:/src/flutter/packages/flutter",
       "packageUri": "lib/",
@@ -82,6 +106,12 @@
     {
       "name": "flutter_lints",
       "rootUri": "file:///C:/Users/czrcr/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_lints-2.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "flutter_plugin_android_lifecycle",
+      "rootUri": "file:///C:/Users/czrcr/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.14",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
@@ -296,7 +326,7 @@
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2023-05-08T17:11:49.928396Z",
+  "generated": "2023-05-15T15:14:47.991984Z",
   "generator": "pub",
   "generatorVersion": "2.19.4"
 }

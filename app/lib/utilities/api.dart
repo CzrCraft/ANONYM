@@ -1,9 +1,11 @@
 import 'package:Stylr/main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
+import 'package:Stylr/utilities.dart';
+import 'package:flutter/material.dart';
 
 String _apiIP = "https://stylr.go.ro:42069";
-
+String apiIP = _apiIP;
 class MyHttpOverrides extends HttpOverrides {
   // USED ONLY FOR NOT VERIFYING SSL CERTIFICATES
   // DO NOT USE THIS IN PRODUCTION OR DEPLOYMENT ENVIROMENTS!!
@@ -70,5 +72,41 @@ void get_variants(String security_token, String blueprintID, Function callback) 
     callback(result.body);
   } else {
     callback("");
+  }
+}
+
+void sendFileToApi(String filePath, String securityToken, Function callback) async {
+  var request = await http.MultipartRequest('POST', Uri.parse(_apiIP + "/api/files/upload"));
+  request.headers["authorization"] = "Bearer $securityToken";
+  request.files.add(
+    http.MultipartFile(
+      'file',
+      File(filePath).readAsBytes().asStream(),
+      File(filePath).lengthSync(),
+      filename: filePath.split("/").last
+    )
+  );
+  var res = await request.send();
+  callback();
+}
+
+Future getUsersFilesFromApi(String securityToken) async{
+  return await http.get(Uri.parse(_apiIP + "/api/files"), headers: {
+    "Authorization": "Bearer $securityToken",
+  });
+}
+
+Future getDesigns(String securityToken) async {
+  return await http.get(Uri.parse(_apiIP + "/api/catalog/designs"), headers: {
+    "Authorization": "Bearer $securityToken",
+  });
+}
+
+
+Widget getImageFromApi(String imageID, double height, double width, String securityToken, {GlobalKey? key}){
+  if(key == null){
+    return Image.network(apiIP + "/api/files/" + imageID, width: width, height: height, fit: BoxFit.cover);
+  }else{
+    return Image.network(apiIP + "/api/files/" + imageID, width: width, height: height, fit: BoxFit.cover, key: key);
   }
 }

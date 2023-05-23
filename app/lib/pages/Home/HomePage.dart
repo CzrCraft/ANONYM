@@ -26,13 +26,13 @@ class _HomePageState extends State<HomePage> {
         childPage = CataloguePage(key: GlobalKey());
         break;
       case 1:
-        childPage = new CataloguePage(key: GlobalKey());
+        childPage = CataloguePage(key: GlobalKey());
         break;
       case 2:
-        childPage = new DesignerPage(key: GlobalKey());
+        childPage = DesignerPage(key: GlobalKey());
         break;
       case 3:
-        childPage = new ProfilePage(key: GlobalKey());
+        childPage = ProfilePage(key: GlobalKey());
     }
     super.initState();
   }

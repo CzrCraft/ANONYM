@@ -343,7 +343,7 @@ class _Login extends StatefulWidget {
   State<_Login> createState() => __LoginState();
 }
 
-//TODO: add error messages for loging in
+//TODO: add error messages for logging in
 class __LoginState extends State<_Login> {
   @override
   late Future signupFuture;

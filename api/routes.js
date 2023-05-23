@@ -82,14 +82,14 @@ module.exports = {
     create_user: async function(req, res){
         try{
             const user_model = mongoose.model("user", schemas.UserSchema)
-            if(await user_model.findOne({username: await sha256(req.headers["username"])}).exec() == null){
+            if(await user_model.findOne({username: req.headers["username"]}).exec() == null){
                 const securityToken_model = mongoose.model("security_token", schemas.SecurityTokenSchema)
                 let key = await token_gen.create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(50)
                 while(await securityToken_model.findOne({token: await sha256(key)}) != null){
                     key = await token_gen.create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(50) 
                 }
-                await user_model.create({username: await sha256(req.headers["username"]), password: await sha256(req.headers["password"]), remaining_uploads: 0})
-                await securityToken_model.create({username: await sha256(req.headers["username"]), token: await sha256(key), creation_date: Math.round(Date.now() / 1000)})
+                await user_model.create({username: req.headers["username"], password: await sha256(req.headers["password"]), remaining_uploads: 0})
+                await securityToken_model.create({username: req.headers["username"], token: await sha256(key), creation_date: Math.round(Date.now() / 1000)})
                 res.statusCode = 200;
                 res.send(key)
 
@@ -109,14 +109,14 @@ module.exports = {
     login: async function(req, res){
         try{
             const user_model = mongoose.model("user", schemas.UserSchema)
-            if(await user_model.findOne({username: await sha256(req.headers["username"])}).exec() != null){
-                if(await user_model.findOne({username: await sha256(req.headers["username"]), password: await sha256(req.headers["password"])}).exec() != null){
+            if(await user_model.findOne({username: req.headers["username"]}).exec() != null){
+                if(await user_model.findOne({username: req.headers["username"], password: await sha256(req.headers["password"])}).exec() != null){
                     const securityToken_model = mongoose.model("security_token", schemas.SecurityTokenSchema)
                     let key = await token_gen.create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(50)
                     while(await securityToken_model.findOne({token: await sha256(key)}) != null){
                         key = await token_gen.create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(50) 
                     }
-                    await securityToken_model.updateOne({username: await sha256(req.headers["username"])}, {token: await sha256(key), creation_date: Math.round(Date.now() / 1000)})
+                    await securityToken_model.updateOne({username: req.headers["username"]}, {token: await sha256(key), creation_date: Math.round(Date.now() / 1000)})
                     res.statusCode = 200
                     res.send(key)
                 }else{
@@ -193,7 +193,9 @@ module.exports = {
             console.log(err);
         }
     },
-    auth_handler: async function (req, res, route_func) {
+    auth_handler: async function (req, res, route_func, route_name) {
+        console.log("----------------------------");
+        console.log("Verification attepmted for " + route_name);
         try {
             if (await checkToken(req.headers.authorization.split(" ")[1])) {
                 console.log("Token was successfully verified: " + req.headers.authorization.split(" ")[1])
@@ -237,14 +239,22 @@ module.exports = {
         try{
             let securityTokenModel = mongoose.model("security_token", schemas.SecurityTokenSchema);
             let designModel = mongoose.model("design", schemas.DesignSchema)
-            let author_name = await securityTokenModel.findOne({token: await sha256(token)}).exec().username;
+            let author_name = (await securityTokenModel.findOne({ token: await sha256(token) }).exec()).username;
             let print_provider = req.headers["print_provider"]
             let blueprint = req.headers["blueprint_id"]
+            let variant_id = req.headers["variant_id"]
+            let designName = req.headers["design_name"]
+            let thumnbnail_id = req.headers["thumbnail"]
             let design_creation_date = Math.round(Date.now() / 1000)
-            let design_properties = req.body.properties
+            let design_properties = JSON.parse(JSON.stringify(req.body.properties))
 
-            let result = await designModel.create({author: author_name, like_count: 0, print_provider_id: print_provider, blueprint_id: blueprint, creation_date: design_creation_date, properties: design_properties})
-            if(result != null){
+            let designID = await require("random-token").create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(100)
+            while ((await designModel.findOne({ design_id: designID }).exec()) != null) {
+                designID = await require("random-token").create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(100)
+            }
+            let result = await designModel.create({liked_by: "", design_id: designID, thumbnail_id: thumnbnail_id, designName: designName, author: author_name, like_count: 0, print_provider_id: print_provider, blueprint_id: blueprint, creation_date: design_creation_date, properties: design_properties, variant_id: variant_id})
+            if (result != null) {
+                console.log (design_properties);
                 res.sendStatus(200);
             }else{
                 res.sendStatus(400);
@@ -258,10 +268,9 @@ module.exports = {
     get_designs: async function(req, res, token){
         try{
             let designModel = mongoose.model("design", schemas.DesignSchema);
-            let result = await designModel.find({}, "-_id -print_provider_id -__v").sort({like_count: -1}).limit(50).exec()
+            let result = await designModel.find({}, "-_id -print_provider_id -__v -print_provider_id -blueprint_id -variant_id -creation_date").sort({like_count: -1}).exec()
             if(result != null){
                 res.status = 200;
-                console.log(result);
                 res.send(result);
             }else{
                 res.sendStatus(500);
@@ -271,7 +280,72 @@ module.exports = {
             console.log(err);
         }
     },
-
+    like_design: async function(req, res, token){
+        try{
+            let designModel = mongoose.model("design", schemas.DesignSchema);
+            let security_token = mongoose.model("security_token", schemas.SecurityTokenSchema)
+            let designID = req.params.design_id
+            let result = await designModel.findOne({ design_id: designID }, "-_id -author -designName -thumbnail_id -print_provider_id -blueprint_id -variant_id -creation_date -properties").exec()
+            if (result != null) {
+                let likedBy = result["liked_by"].split(",");
+                let tokenResult = await security_token.findOne({token: await sha256(token)}, "-_id -__v").exec()
+                if (tokenResult != null) {
+                    if (likedBy == "") {
+                        await designModel.updateOne({ design_id: designID }, { like_count: parseInt(result["like_count"]) + 1, liked_by: (result["liked_by"] + "," + tokenResult["username"]) }).exec()
+                        res.sendStatus(200);
+                    } else {
+                        if (!likedBy.includes(tokenResult["username"])) {
+                            await designModel.updateOne({ design_id: designID }, { like_count: parseInt(result["like_count"]) + 1, liked_by: (result["liked_by"] + "," + tokenResult["username"]) }).exec()
+                            res.sendStatus(200);
+                        } else {
+                            res.sendStatus(400);
+                        }
+                    }
+                } else {
+                    res.sendStatus(400);
+                }
+            } else {
+                res.status = 400;
+                res.send("DESIGN NOT FOUND")
+            }
+        }catch(err){
+            res.sendStatus(500);
+            console.log(err);
+        }
+    },
+    dislike_design: async function(req, res, token){
+        try{
+            let designModel = mongoose.model("design", schemas.DesignSchema);
+            let security_token = mongoose.model("security_token", schemas.SecurityTokenSchema)
+            let designID = req.params.design_id
+            let result = await designModel.findOne({ design_id: designID }, "-_id -author -designName -thumbnail_id -print_provider_id -blueprint_id -variant_id -creation_date -properties").exec()
+            if (result != null) {
+                let likedBy = result["liked_by"].split(",");
+                let tokenResult = await security_token.findOne({token: await sha256(token)}, "-_id -__v").exec()
+                if (tokenResult != null) {
+                    if (likedBy == "") {
+                        res.sendStatus(400);
+                    } else {
+                        console.log(likedBy);
+                        if (likedBy.includes(tokenResult["username"])) {
+                            await designModel.updateOne({ design_id: designID }, { like_count: parseInt(result["like_count"]) - 1, liked_by: (result["liked_by"].replace("," + tokenResult["username"], "")) }).exec()
+                            res.sendStatus(200);
+                        } else {
+                            res.sendStatus(400);
+                        }
+                    }
+                } else {
+                    res.sendStatus(400);
+                }
+            } else {
+                res.status = 400;
+                res.send("DESIGN NOT FOUND")
+            }
+        }catch(err){
+            res.sendStatus(500);
+            console.log(err);
+        }
+    },
     get_blueprint: async function (req, response, token) {
         try{
             let result = "";
@@ -344,7 +418,23 @@ module.exports = {
             console.log(err);
         }
     },
-
+    getUsersFiles: async function (req, res, token) {
+        try {
+            let fileTrackerModel = mongoose.model("fileTracker", schemas.FileTrackerSchema)
+            let security_token = mongoose.model("security_token", schemas.SecurityTokenSchema)
+            let username = (await security_token.findOne({ token: await sha256(token) }).exec()).username
+            let fileTracker = await fileTrackerModel.find({ author: username })
+            let result = [];
+            for (const file of fileTracker) {
+                result.push(file.file_id);
+            }
+            res.status = 200;
+            res.send(result.toString());
+        } catch (err) {
+            console.log(err);
+            res.sendStatus(400);
+        }
+    },
     ping: async function (req, res, token) {
         res.sendStatus(200);
     }

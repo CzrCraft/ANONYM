@@ -57,6 +57,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.17.0"
+  contained_tab_bar_view:
+    dependency: "direct main"
+    description:
+      name: contained_tab_bar_view
+      sha256: "87e35f47992764e45ab6205493f2f90c1e3fac4ad84f2b2285b73414727b756e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.8.0"
+  container_tab_indicator:
+    dependency: transitive
+    description:
+      name: container_tab_indicator
+      sha256: b0bdd73bb495c31c5711cefa363511b10bb3ebcfc007b603a2599401ebe6b2d9
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -65,6 +81,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  draggable_widget:
+    dependency: "direct main"
+    description:
+      name: draggable_widget
+      sha256: d7f6b1eb9cb79b724b02dc2ac699f82d1ab20b99920b8b1f25812054d72ca803
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   fake_async:
     dependency: transitive
     description:
@@ -89,6 +113,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.4"
+  file_picker:
+    dependency: "direct main"
+    description:
+      name: file_picker
+      sha256: c7a8e25ca60e7f331b153b0cb3d405828f18d3e72a6fa1d9440c86556fffc877
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.3.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -110,6 +142,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  flutter_plugin_android_lifecycle:
+    dependency: transitive
+    description:
+      name: flutter_plugin_android_lifecycle
+      sha256: "96af49aa6b57c10a312106ad6f71deed5a754029c24789bbf620ba784f0bd0b0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.14"
   flutter_test:
     dependency: "direct dev"
     description: flutter

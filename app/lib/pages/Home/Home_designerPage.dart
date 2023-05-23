@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:Stylr/main.dart';
 import 'package:flutter/material.dart';
@@ -8,13 +8,41 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'dart:convert';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'pages.dart';
-
+import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
+import 'package:file_picker/file_picker.dart';
+import 'dart:io';
+import 'package:draggable_widget/draggable_widget.dart';
 // dirty solution to get the images to scale with the screen
 // not proud of it, but it'l work
 late BuildContext _listViewContext;
 late String _selectedSize;
 late String _selectedColor;
 late List<dynamic> _variantsList;
+
+GlobalKey _editPageKey = GlobalKey();
+
+class _shirtImage extends StatelessWidget {
+  _shirtImage(this.imgX, this.imgY, this.imgId, this.image,{super.key});
+  double imgX;
+  double imgY;
+  String imgId;
+  Widget image;
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      bottom: imgY,
+      left: imgX,
+      child: GestureDetector(
+        onTap: (){
+          print("tapped"); 
+        },
+        behavior: HitTestBehavior.translucent,
+        child: AbsorbPointer(child: image),
+      ),
+    );
+  }
+}
+
 class _EditPage extends StatefulWidget {
   const _EditPage({super.key});
 
@@ -24,12 +52,176 @@ class _EditPage extends StatefulWidget {
 
 class __EditPageState extends State<_EditPage> {
   @override
+  List<Widget> frontShirtImages = List.empty(growable: true);
+  List<Widget> backShirtImages = List.empty(growable: true);
+  Widget getImageToUse(String value, bool detectGestures, {key}){
+    if(detectGestures){
+      if(key != null){
+        return GestureDetector(child: Image.network(apiIP + "/api/files/" + value, width: getFromPercent("horizontal", 20, context), height: getFromPercent("vertical", 10, context), fit: BoxFit.cover, key: key), onLongPress: (){pickedImage(value);},);
+      }else{
+        return GestureDetector(child: Image.network(apiIP + "/api/files/" + value, width: getFromPercent("horizontal", 20, context), height: getFromPercent("vertical", 10, context), fit: BoxFit.cover), onLongPress: (){pickedImage(value);},);
+      }
+    }else{
+      if(key != null){
+        return Image.network(apiIP + "/api/files/" + value, width: getFromPercent("horizontal", 20, context), height: getFromPercent("vertical", 10, context), fit: BoxFit.cover, key: key);
+      }else{
+        return Image.network(apiIP + "/api/files/" + value, width: getFromPercent("horizontal", 20, context), height: getFromPercent("vertical", 10, context), fit: BoxFit.cover);
+      }
+    }
+  }
+  void pickedImage(String imageId){
+    if(shirtSide == 0){
+      setState(() {
+        GlobalKey tempKey = GlobalKey();
+        frontShirtImages.add(_shirtImage(getFromPercent("horizontal", 35, context), getFromPercent("vertical", 20, context), imageId, getImageToUse(imageId, false), key: tempKey));
+      });
+    }else if (shirtSide == 1){
+      setState(() {
+        GlobalKey tempKey = GlobalKey();
+        backShirtImages.add(_shirtImage(0, 0, imageId, getImageToUse(imageId, false), key: tempKey));
+      });
+    }
+  }
+
+  int shirtSide = 0;
+  late Widget shirtImage;
   Widget build(BuildContext context) {
     print(_selectedColor);
     print(_selectedSize);
-    return Container(
-      color: secondaryColor,
-    );
+    List<Widget> tempList = List.empty(growable: true);
+    if(shirtSide == 0){
+      tempList.addAll(frontShirtImages);
+      tempList.add(Image.asset('assets/graphics/shirt_front_no_bg.png'));
+      shirtImage = Stack(
+        children: tempList,
+        clipBehavior: Clip.none
+      );
+    }else{
+      tempList.addAll(backShirtImages);
+      tempList.add(Image.asset('assets/graphics/shirt_back_no_bg.png'));
+      shirtImage = Stack(
+        children: tempList,
+        clipBehavior: Clip.none
+      );
+    }
+    return Material(child: Container(
+      color: primaryColor,
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: getFromPercent("vertical", 5, context)),
+            child: Container(
+              height: getFromPercent("vertical", 45, context),
+              width: getFromPercent("horizontal", 95, context),
+              decoration: BoxDecoration(
+                color: secondaryColor,
+                borderRadius: BorderRadius.circular(7)
+              ),
+              child: AbsorbPointer(child: shirtImage)
+            ), 
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: getFromPercent("vertical", 2, context)),
+            child: Container(
+              height: getFromPercent("vertical", 45, context),
+              width: getFromPercent("horizontal", 95, context),
+              decoration: BoxDecoration(
+                color: secondaryColor,
+                borderRadius: BorderRadius.circular(7)
+              ),
+              child: Padding(
+                padding: EdgeInsets.only(top: getFromPercent("vertical", 0.5, context)),
+                child: ContainedTabBarView(
+                  tabs: [
+                    Tab(
+                      child: Text("Upload", style: TextStyle(color: secondaryColor, fontWeight: FontWeight.w600))
+                    ),
+                    Tab(
+                      child: Text("Cloud", style: TextStyle(color: secondaryColor, fontWeight: FontWeight.w600))
+                    )
+                  ],
+                  views: [
+                    Center(
+                      child: TextButton(
+                        child: Text("Upload an image", style: TextStyle(color: secondaryColor, fontSize: getFromPercent("horizontal", 5, context))),
+                        onPressed: ()async{
+                          FilePickerResult? result = await FilePicker.platform.pickFiles(
+                            type: FileType.image
+                          );
+                          if (result != null) {
+                            sendFileToApi(result.files.first.path!, api_token, (){
+                              setState(() {});
+                            });
+                          }
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: primaryColor
+                        ),
+                      )
+                    ),
+                    FutureBuilder(
+                      future: getUsersFilesFromApi(api_token),
+                      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                        List<Widget> childWidgets = List.empty(growable: true);
+                        if(snapshot.hasData){
+                          int temp = 1;
+                          List<Widget> tempRow = List.empty(growable: true);
+                          int maxImages = 5;
+                          bool didFirstRow = false;
+                          for(String value in snapshot.data!.body.split(",")){
+                            debugPrint(temp.toString());
+                            if(temp >= maxImages){
+                              if(didFirstRow == false){
+                                temp = 1;
+                                childWidgets.add(Row(children: tempRow.toList()));
+                                tempRow.clear();
+                                tempRow.add(getImageToUse(value, true));
+                                didFirstRow = true;
+                                maxImages -= 1;
+                              }else {
+                                temp = 1;
+                                childWidgets.add(Row(children: tempRow.toList()));
+                                tempRow.clear();
+                                tempRow.add(getImageToUse(value, true));
+                              }
+                              
+                            }else{
+                              tempRow.add(getImageToUse(value, true));
+                              temp += 1;
+                            }
+                          }
+                          debugPrint("a " + temp.toString());
+                          if(temp <= maxImages){
+                            childWidgets.add(Row(children: tempRow.toList()));
+                          }
+                          return Center(child: ListView(children: childWidgets, padding: EdgeInsets.symmetric(horizontal: getFromPercent("horizontal", 7, context))));
+                        }else{
+                          return LoadingDots(lightMode: true,);
+                        }
+                      },
+                      key: GlobalKey() 
+                    )
+                  ],
+                  tabBarProperties: TabBarProperties(
+                    background: Container(
+                      decoration: BoxDecoration(
+                        color: primaryColor,
+                        borderRadius: BorderRadius.circular(11)
+                      ),
+                    ),
+                    width: getFromPercent("horizontal", 93, context),
+                    height: getFromPercent("vertical", 4.5, context),
+                    indicatorColor: secondaryColor,
+                    indicatorPadding: EdgeInsets.all(1),
+                    indicatorSize: TabBarIndicatorSize.label,
+                  ),
+                )
+              )
+            ), 
+          ),
+        ],
+      )
+    ));
   }
 }
 
@@ -102,13 +294,13 @@ class __ChoseVariantPageState extends State<_ChoseVariantPage> {
                           fontSize: getFromPercent("horizontal", 8, context)),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8),
+                      padding: EdgeInsets.symmetric(vertical: getFromPercent("vertical", 0.5, context)),
                       child: Container(
                         decoration: BoxDecoration(
                           color: primaryColor,
                           borderRadius: BorderRadius.circular(12)),
                         child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5),
+                          padding: EdgeInsets.symmetric(horizontal: getFromPercent("vertical", 0.5, context)),
                           child: DropdownButton<String>(
                             items: colorDropdownItems
                                 .map<DropdownMenuItem<String>>(
@@ -136,13 +328,13 @@ class __ChoseVariantPageState extends State<_ChoseVariantPage> {
                       )
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8),
+                      padding: EdgeInsets.symmetric(vertical: getFromPercent("vertical", 0.5, context)),
                       child: Container(
                         decoration: BoxDecoration(
                           color: primaryColor,
                           borderRadius: BorderRadius.circular(12)),
                         child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5),
+                          padding: EdgeInsets.symmetric(horizontal: getFromPercent("vertical", 0.5, context)),
                           child: DropdownButton<String>(
                             items: sizeDropdownItems
                                 .map<DropdownMenuItem<String>>(
@@ -169,7 +361,8 @@ class __ChoseVariantPageState extends State<_ChoseVariantPage> {
                     onPressed: (){
                       _selectedColor = colorDropdownValue;
                       _selectedSize = sizeDropdownValue;
-                      Navigator.push(context,animatedRoute(_EditPage()));
+                      _editPageKey = GlobalKey();
+                      Navigator.push(context,animatedRoute(_EditPage(key: _editPageKey)));
                     }, 
                     style: TextButton.styleFrom(
                       backgroundColor: primaryColor,
@@ -253,8 +446,8 @@ class _DesignerPageState extends State<DesignerPage> {
           tempChildWidgets.add(Row(
             children: List.from(reuseableList)
                 .map((widget) => Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 1.5, vertical: 3),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: getFromPercent("horizontal", 0.3, _listViewContext), vertical: getFromPercent("horizontal", 0.7, _listViewContext)),
                       child: widget,
                     ))
                 .toList(),
@@ -276,6 +469,7 @@ class _DesignerPageState extends State<DesignerPage> {
   int animationState = 0;
   bool isDoneTyping = false;
   Widget build(BuildContext context) {
+    setThemeColors(false);
     _listViewContext = context;
     switch (animationState) {
       case 0:

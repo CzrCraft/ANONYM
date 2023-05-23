@@ -12,40 +12,43 @@ server.use(fileUpload())
 port = 42069;
 let configs = JSON.parse("{}");
 function doneReading(){
-    port = configs["server_settings"]["port"]
-    https
-      .createServer({
-        key: fs.readFileSync("sslcert/server.key"),
-        cert: fs.readFileSync("sslcert/server.crt"),
-      },server)
-      .listen(port, ()=>{
-        console.log('server is running on port ' + port)
-      });
-    routes.main(configs["server_settings"]["database_settings"]["ip"], 
-                configs["server_settings"]["database_settings"]["port"], 
-                configs["server_settings"]["database_settings"]["password"], 
-                configs["server_settings"]["database_settings"]["user"], 
-                configs["server_settings"]["database_settings"]["name"],
-                configs["server_settings"]["database_settings"]["verify_ssl_certificate"],
-                configs["server_settings"]["security_token_valability"],
-                configs["server_settings"]["upload_dir"],
-                configs["printify"]["token"]);
-    server.get('/api', (req,res)=>{res.send("Base dir of Stylr's API")})
-    server.get('/api/ping', (req,res)=>{routes.auth_handler(req, res, routes.ping)})
-    
-    //          user handling
-    server.get("/api/user/signup", (req,res) => {routes.create_user(req, res)})
-    server.get("/api/user/login", (req,res) => {routes.login(req, res)})
-    //          file handling
-    server.post("/api/files/upload", (req,res) => {routes.auth_handler(req, res, routes.upload)})
-    server.get("/api/files/:file_id", (req,res) => {routes.get_file(req, res)})
-    //          catalog handling
-    server.get("/api/catalog/blueprints", (req, res) => {routes.auth_handler(req, res, routes.get_blueprints)})
-    server.get("/api/catalog/blueprint", (req,res) => {routes.auth_handler(req, res, routes.get_blueprint)})
-    server.post("/api/catalog/designs", (req,res) => {routes.auth_handler(req, res, routes.upload_design)})
-    server.get("/api/catalog/designs", (req,res) => {routes.auth_handler(req, res, routes.get_designs)})
-    server.get("/api/catalog/get_variants", (req,res) => {routes.auth_handler(req, res, routes.get_variants)})
-    
+  port = configs["server_settings"]["port"]
+  https
+    .createServer({
+      key: fs.readFileSync("sslcert/server.key"),
+      cert: fs.readFileSync("sslcert/server.crt"),
+    },server)
+    .listen(port, ()=>{
+      console.log('server is running on port ' + port)
+    });
+  routes.main(configs["server_settings"]["database_settings"]["ip"], 
+              configs["server_settings"]["database_settings"]["port"], 
+              configs["server_settings"]["database_settings"]["password"], 
+              configs["server_settings"]["database_settings"]["user"], 
+              configs["server_settings"]["database_settings"]["name"],
+              configs["server_settings"]["database_settings"]["verify_ssl_certificate"],
+              configs["server_settings"]["security_token_valability"],
+              configs["server_settings"]["upload_dir"],
+              configs["printify"]["token"]);
+  server.get('/api', (req,res)=>{res.send("Base dir of Stylr's API")})
+  server.get('/api/ping', (req,res)=>{routes.auth_handler(req, res, routes.ping, "API_PING")})
+  
+  //          user handling
+  server.get("/api/user/signup", (req,res) => {routes.create_user(req, res)})
+  server.get("/api/user/login", (req,res) => {routes.login(req, res)})
+  //          file handling
+  server.post("/api/files/upload", (req,res) => {routes.auth_handler(req, res, routes.upload, "FILE_UPLOAD")})
+  server.get("/api/files", (req,res) => {routes.auth_handler(req, res, routes.getUsersFiles, "FILE_GET_USERS")})
+  server.get("/api/files/:file_id", (req,res) => {routes.get_file(req, res)})
+  //          blueprint handling
+  server.get("/api/catalog/blueprints", (req, res) => {routes.auth_handler(req, res, routes.get_blueprints, "GET_BLUEPRINTS")})
+  server.get("/api/catalog/blueprint", (req, res) => { routes.auth_handler(req, res, routes.get_blueprint, "GET_SPECIFIC_BLUEPRINT") })
+  server.get("/api/catalog/get_variants", (req,res) => {routes.auth_handler(req, res, routes.get_variants, "GET_BLUEPRINT_VARIANTS")})
+  //          desgins handling
+  server.post("/api/catalog/designs", (req,res) => {routes.auth_handler(req, res, routes.upload_design, "UPLOAD_DESIGN")})
+  server.get("/api/catalog/designs", (req, res) => {routes.auth_handler(req, res, routes.get_designs, "GET_DESIGNS")})
+  server.post("/api/catalog/design/popularity/:design_id", (req, res) => { routes.auth_handler(req, res, routes.like_design, "LIKE_DESIGN") })
+  server.delete("/api/catalog/design/popularity/:design_id", (req, res) => {routes.auth_handler(req, res, routes.dislike_design, "DISLIKE_DESIGN")})
 }
 fs.readFile("config.json", "utf8", (err, jsonString) => {
     if (err) {
