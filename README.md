@@ -49,3 +49,12 @@ Requirements:
  * **Flutter**
 
 Before running/building it run "flutter pub get" to install all the required packages.
+
+
+# Setting up
+
+For easy installation of the build env use these commands in the base dir of the project:
+
+    cd project_utillities
+    setup_project.bat
+Make sure that Flutter and NodeJS are installed properly before running.
