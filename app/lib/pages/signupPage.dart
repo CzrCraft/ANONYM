@@ -17,11 +17,11 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
-  @override
   int animationStage = 0;
   String username = "";
   String password = "";
   late Ticker _ticker;
+  @override
   void initState() {
     super.initState();
     _resultState = 0;
@@ -96,7 +96,6 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
             mainAxisAlignment: MainAxisAlignment.center,
           ),
         );
-        break;
       case 2:
         return Container(
           color: primaryColor,
@@ -129,7 +128,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                           maxLength: 20,
                           onSubmitted: (String input) {
                             input = input.trim();
-                            if (input != null && input != "") {
+                            if (input != "") {
                               setState(() {
                                 print(input);
                                 username = input;
@@ -184,8 +183,6 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
             mainAxisAlignment: MainAxisAlignment.center,
           ),
         );
-        break;
-
       case 3:
         return Container(
           color: primaryColor,
@@ -213,7 +210,6 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
             mainAxisAlignment: MainAxisAlignment.center,
           ),
         );
-        break;
       case 4:
         return Container(
           color: primaryColor,
@@ -245,7 +241,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                         maxLength: 20,
                         onSubmitted: (String input) {
                           input = input.trim();
-                          if (input != null && input != "") {
+                          if (input != "") {
                             setState(() {
                               password = input;
                               animationStage = 5;
@@ -296,7 +292,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
             mainAxisAlignment: MainAxisAlignment.center,
           ),
         );
-        break;
+        
       case 5:
         try {
           return _SignUp(username, password);
@@ -319,15 +315,15 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
 class _SignUp extends StatefulWidget {
   final String username;
   final String password;
-  _SignUp(@required this.username, @required this.password, {super.key});
+  _SignUp(this.username, this.password, {super.key});
 
   @override
   State<_SignUp> createState() => __SignUpState();
 }
 
 class __SignUpState extends State<_SignUp> {
-  @override
   late Future signupFuture;
+  @override
   void initState() {
     super.initState();
     signupFuture = signup(widget.username, widget.password);

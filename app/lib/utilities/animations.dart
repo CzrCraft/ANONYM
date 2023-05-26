@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:Stylr/main.dart';

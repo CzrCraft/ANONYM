@@ -112,7 +112,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             mainAxisAlignment: MainAxisAlignment.center,
           ),
         );
-        break;
       case 2:
         return Container(
           color: primaryColor,
@@ -145,7 +144,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           maxLength: 20,
                           onSubmitted: (String input) {
                             input = input.trim();
-                            if (input != null && input != "") {
+                            if (input != "") {
                               setState(() {
                                 print(input);
                                 username = input;
@@ -200,7 +199,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             mainAxisAlignment: MainAxisAlignment.center,
           ),
         );
-        break;
 
       case 3:
         return Container(
@@ -229,7 +227,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             mainAxisAlignment: MainAxisAlignment.center,
           ),
         );
-        break;
       case 4:
         return Container(
           color: primaryColor,
@@ -261,7 +258,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         maxLength: 20,
                         onSubmitted: (String input) {
                           input = input.trim();
-                          if (input != null && input != "") {
+                          if (input != "") {
                             setState(() {
                               password = input;
                               animationStage = 5;
@@ -312,7 +309,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             mainAxisAlignment: MainAxisAlignment.center,
           ),
         );
-        break;
       case 5:
         try {
           return _Login(username, password, this);
@@ -337,7 +333,7 @@ class _Login extends StatefulWidget {
   final String password;
   final State parent;
   _Login(
-      @required this.username, @required this.password, @required this.parent,
+      this.username, this.password, this.parent,
       {super.key});
 
   @override
@@ -346,7 +342,6 @@ class _Login extends StatefulWidget {
 
 //TODO: add error messages for logging in
 class __LoginState extends State<_Login> {
-  @override
   late Future signupFuture;
   void initState() {
     super.initState();

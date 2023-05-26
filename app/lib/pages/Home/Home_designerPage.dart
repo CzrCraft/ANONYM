@@ -25,6 +25,30 @@ List<GlobalKey<__shirtImageState>> _frontShirtImageKeys = List.empty(growable: t
 List<Widget> _backShirtImages = List.empty(growable: true);
 List<GlobalKey<__shirtImageState>> _backShirtImageKeys = List.empty(growable: true);
 
+_updateAnImage(String property, double value, GlobalKey<__shirtImageState> imgKey){
+  switch(property){
+    case "scale":
+      print(imgKey.currentState!.getScale() * value);
+      imgKey.currentState!.setScale(imgKey.currentState!.getScale() + value);
+      break;
+    case "posX":
+      imgKey.currentState!.setX(imgKey.currentState!.getX() + value);
+      break;
+    case "posY":
+      imgKey.currentState!.setY(imgKey.currentState!.getY() + value);
+      break;
+  }
+}
+
+GlobalKey<__shirtImageState>? _getSelectedImage(){
+  for(GlobalKey<__shirtImageState> element in _frontShirtImageKeys) {
+    if(element.currentState!.isSelected()){
+      return element;
+    }
+  }
+  return null;
+}
+
 void _updateSelectedImage(Widget img, bool frontImages){
   if(frontImages){
     _frontShirtImageKeys.forEach((GlobalKey<__shirtImageState> element) {
@@ -51,7 +75,7 @@ void _removeImage(Widget image, bool frontImages){
 class _customImage extends StatefulWidget {
   _customImage({required this.imgKey, required this.imgID, super.key});
   //Image.network(apiIP + "/api/files/" + value, width: getFromPercent("horizontal", 20, context), height: getFromPercent("vertical", 10, context), fit: BoxFit.cover, key: key);
-  double scale = 1.0;
+  double scale = 0.2;
   double orgHeight = 200;
   double orgWidth = 200;
   String imgID;
@@ -63,7 +87,7 @@ class _customImage extends StatefulWidget {
 class __customImageState extends State<_customImage> {
   @override
   GlobalKey childKey = GlobalKey();
-  late Image childImage = Image.network(apiIP + "/api/files/" + widget.imgID, height: widget.orgHeight, width: widget.orgWidth,scale: widget.scale, key: childKey);
+  late Image childImage = Image.network(apiIP + "/api/files/" + widget.imgID,scale: widget.scale, key: childKey);
   void initState() {
     widget.orgHeight = childImage.height!;
     widget.orgWidth = childImage.height!;
@@ -87,13 +111,13 @@ class __customImageState extends State<_customImage> {
 }
 
 class _shirtImage extends StatefulWidget {
-  _shirtImage(this.imageKey, this.imgX, this.imgY, this.imgId, this.image,{super.key});
+  _shirtImage(this.imageKey, this.imgX, this.imgY, this.imgID, this.image,{super.key});
   double imgX;
   double imgY;
-  String imgId;
+  String imgID;
   Widget image;
   GlobalKey<__customImageState> imageKey;
-  double scaleRatio = 0;
+  double scale = 9;
   bool selected = false;
   @override
   State<_shirtImage> createState() => __shirtImageState();
@@ -101,47 +125,8 @@ class _shirtImage extends StatefulWidget {
 
 class __shirtImageState extends State<_shirtImage> {
   @override
-
-
-  void _onHorizontalDragStartHandler(DragStartDetails details) {
-    setState(() {
-      widget.imgX = details.globalPosition.dx.floorToDouble() - 40;
-      widget.imgY = getFromPercent("vertical", 45, context) - details.globalPosition.dy.floorToDouble();
-    });
-  }
-
-  /// Track starting point of a vertical gesture
-  void _onVerticalDragStartHandler(DragStartDetails details) {
-    setState(() {
-      widget.imgX = details.globalPosition.dx.floorToDouble() - 40;
-      widget.imgY = getFromPercent("vertical", 45, context) - details.globalPosition.dy.floorToDouble();
-    });
-  }
-
-  void _onDragUpdateHandler(DragUpdateDetails details) {
-    setState(() {
-      widget.imgX = details.globalPosition.dx.floorToDouble() - 40;
-      widget.imgY = getFromPercent("vertical", 45, context) - details.globalPosition.dy.floorToDouble();
-    });
-  }
-
-  /// Track current point of a gesture
-  void _onHorizontalDragUpdateHandler(DragUpdateDetails details) {
-    setState(() {
-      widget.imgX = details.globalPosition.dx.floorToDouble() - 40;
-      widget.imgY = getFromPercent("vertical", 45, context) - details.globalPosition.dy.floorToDouble();
-    });
-  }
-
-  /// Track current point of a gesture
-  void _onVerticalDragUpdateHandler(DragUpdateDetails details) {
-    setState(() {
-      widget.imgX = details.globalPosition.dx.floorToDouble() - 40;
-      widget.imgY = getFromPercent("vertical", 45, context) - details.globalPosition.dy.floorToDouble();
-    });
-  }
-
   Widget build(BuildContext context) {
+    widget.image = Image.network(apiIP + "/api/files/" + widget.imgID, scale: widget.scale);
     debugPrint(widget.imgX.toString());
     debugPrint(widget.imgY.toString());
     if(!widget.selected){
@@ -163,20 +148,6 @@ class __shirtImageState extends State<_shirtImage> {
         bottom: widget.imgY,
         left: widget.imgX,
         child: GestureDetector(
-          // onHorizontalDragStart: _onHorizontalDragStartHandler,
-          // onVerticalDragStart: _onVerticalDragStartHandler,
-          // onHorizontalDragUpdate: _onDragUpdateHandler,
-          // onVerticalDragUpdate: _onDragUpdateHandler,
-          onScaleUpdate: (details){
-              var angle = details.rotation;
-              var scale = details.scale;
-              widget.imageKey.currentState!.setScale(scale);
-              print("Angle: $angle");
-              print("Scale: $scale");
-              setState(() {
-                
-              });
-          },
           onLongPress: (){
               setState(() {
                 _removeImage(widget, true);
@@ -199,6 +170,30 @@ class __shirtImageState extends State<_shirtImage> {
     }
   
   }
+  double getScale(){
+    return widget.scale;
+  }
+  void setScale(double newScale){
+    setState(() {
+      widget.scale = newScale;
+    });
+  }
+  double getX(){
+    return widget.imgX;
+  }
+  double getY(){
+    return widget.imgY;
+  }
+  void setX(double newX){
+    setState(() {
+      widget.imgX = newX;
+    });
+  }
+  void setY(double newY){
+    setState(() {
+      widget.imgY = newY;
+    });
+  }
   void select(){
     setState(() {
       widget.selected = true;
@@ -209,8 +204,11 @@ class __shirtImageState extends State<_shirtImage> {
       widget.selected = false;
     });
   }
+  bool isSelected(){
+    return widget.selected;
+  }
   String getID(){
-    return widget.imgId;
+    return widget.imgID;
   }
 }
 
@@ -226,8 +224,48 @@ class __EditPageState extends State<_EditPage> {
   @override
   void initState() {
     _frontShirtImages.clear();
+    _frontShirtImageKeys.clear();
     _backShirtImages.clear();
+    _backShirtImageKeys.clear();
     super.initState();
+  }
+
+  void handleEditActions(String action){
+    double moveUp = 5;
+    double moveSide = 5;
+    double scaleRatio = 0.7;
+    switch(action){
+      case "up":
+        if(_getSelectedImage() != null){
+          _updateAnImage("posY", moveUp, _getSelectedImage()!);
+        }
+        break;
+      case "down":
+        if(_getSelectedImage() != null){
+          _updateAnImage("posY", -moveUp, _getSelectedImage()!);
+        }
+        break;
+      case "left":
+        if(_getSelectedImage() != null){
+          _updateAnImage("posX", -moveSide, _getSelectedImage()!);
+        }
+        break;
+      case "right":
+        if(_getSelectedImage() != null){
+          _updateAnImage("posX", moveSide, _getSelectedImage()!);
+        }
+        break;
+      case "scaleUp":
+        if(_getSelectedImage() != null){
+          _updateAnImage("scale", -scaleRatio, _getSelectedImage()!);
+        }
+        break;
+      case "scaleDown":
+        if(_getSelectedImage() != null){
+          _updateAnImage("scale", scaleRatio, _getSelectedImage()!);
+        }
+        break;
+    }
   }
 
   Widget getImageToUse(String value, bool detectGestures, {dontScale = false, key}){
@@ -340,6 +378,9 @@ class __EditPageState extends State<_EditPage> {
                     ),
                     Tab(
                       child: Text("Cloud", style: TextStyle(color: secondaryColor, fontWeight: FontWeight.w600))
+                    ),
+                    Tab(
+                      child: Text("Edit", style: TextStyle(color: secondaryColor, fontWeight: FontWeight.w600))
                     )
                   ],
                   views: [
@@ -424,7 +465,95 @@ class __EditPageState extends State<_EditPage> {
                         }
                       },
                       key: GlobalKey() 
-                    )
+                    ),
+                    Stack(
+                        children: [ 
+                          Positioned(
+                            bottom: getFromPercent("vertical", 26, context),
+                            left: getFromPercent("horizontal", 38, context),
+                            child: TextButton(
+                              style:TextButton.styleFrom(
+                                backgroundColor: primaryColor,
+                                foregroundColor: secondaryColor,
+                              ),
+                              onPressed: (){
+                                handleEditActions("up");
+                              },
+                              child: Icon(Icons.keyboard_arrow_up, color: secondaryColor, size: getFromPercent("horizontal", 12, context),),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: getFromPercent("vertical", 8, context),
+                            left: getFromPercent("horizontal", 38, context),
+                            child: TextButton(
+                              style:TextButton.styleFrom(
+                                backgroundColor: primaryColor,
+                                foregroundColor: secondaryColor,
+                              ),
+                              onPressed: (){
+                                handleEditActions("down");
+                              },
+                              child: Icon(Icons.keyboard_arrow_down, color: secondaryColor, size: getFromPercent("horizontal", 12, context),),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: getFromPercent("vertical", 17, context),
+                            left: getFromPercent("horizontal", 58, context),
+                            child: TextButton(
+                              style:TextButton.styleFrom(
+                                backgroundColor: primaryColor,
+                                foregroundColor: secondaryColor,
+                              ),
+                              onPressed: (){
+                                handleEditActions("right");
+                              },
+                              child: Icon(Icons.keyboard_arrow_right, color: secondaryColor, size: getFromPercent("horizontal", 12, context),),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: getFromPercent("vertical", 17, context),
+                            left: getFromPercent("horizontal", 18, context),
+                            child: TextButton(
+                              style:TextButton.styleFrom(
+                                backgroundColor: primaryColor,
+                                foregroundColor: secondaryColor,
+                              ),
+                              onPressed: (){
+                                handleEditActions("left");
+                              },
+                              child: Icon(Icons.keyboard_arrow_left, color: secondaryColor, size: getFromPercent("horizontal", 12, context),),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: getFromPercent("vertical", 30, context),
+                            left: getFromPercent("horizontal", 4, context),
+                            child: TextButton(
+                              style:TextButton.styleFrom(
+                                backgroundColor: primaryColor,
+                                foregroundColor: secondaryColor,
+                              ),
+                              onPressed: (){
+                                handleEditActions("scaleDown");
+                              },
+                              child: Text("-", style: TextStyle(color: secondaryColor, fontSize: getFromPercent("horizontal", 10, context),)),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: getFromPercent("vertical", 30, context),
+                            left: getFromPercent("horizontal", 73, context),
+                            child: TextButton(
+                              style:TextButton.styleFrom(
+                                backgroundColor: primaryColor,
+                                foregroundColor: secondaryColor,
+                              ),
+                              onPressed: (){
+                                handleEditActions("scaleUp");
+                              },
+                              child: Text("+", style: TextStyle(color: secondaryColor, fontSize: getFromPercent("horizontal", 10, context),)),
+                            ),
+                          ),
+                        ],
+                      )
                   ],
                   tabBarProperties: TabBarProperties(
                     background: Container(
