@@ -20,7 +20,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   // using a ticker to check every frame if login() func has returned a result
   // and if so act accordingly
-  @override
+  // this prevents FutureBuilder sending multiple requests slowing down the API
+  // this problem reappears throughout the app though cuz no time :(
   int animationStage =
       0; // i use this for keeping track at what stage of the "animation" the widget is currently at
   String username =

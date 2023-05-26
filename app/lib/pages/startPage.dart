@@ -5,11 +5,10 @@ import 'package:Stylr/main.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'utilities.dart';
 import 'pages.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class StartPage extends StatefulWidget {
-  const StartPage({super.key});
-
+  StartPage({this.readToken = true, super.key});
+  bool readToken;
   @override
   State<StartPage> createState() => _StartPageState();
 }
@@ -20,15 +19,17 @@ class _StartPageState extends State<StartPage> {
   bool finished_second_animation = false;
   @override
   void initState() {
-    readValue("apiToken", (String token) {
-      ping_api(token, (bool result) {
-        print("something");
-        if (result) {
-          api_token = token;
-          Navigator.push(context, animatedRoute(HomePage(0)));
-        }
+    if(widget.readToken){
+      readValue("apiToken", (String token) {
+        ping_api(token, (bool result) {
+          print("something");
+          if (result) {
+            api_token = token;
+            Navigator.push(context, animatedRoute(HomePage(0)));
+          }
+        });
       });
-    });
+    }
     super.initState();
   }
 

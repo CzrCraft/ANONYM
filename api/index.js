@@ -35,7 +35,10 @@ function doneReading(){
   
   //          user handling
   server.get("/api/user/signup", (req,res) => {routes.create_user(req, res)})
-  server.get("/api/user/login", (req,res) => {routes.login(req, res)})
+  server.get("/api/user/login", (req, res) => { routes.login(req, res) })
+  server.get("/api/user", (req,res) => {routes.auth_handler(req, res, routes.get_username, "GET_USERNAME")})
+  server.post("/api/user/resetPassword", (req,res) => {routes.auth_handler(req, res, routes.resetPassword, "RESET_PASSWORD")})
+  server.post("/api/user/logout", (req,res) => {routes.auth_handler(req, res, routes.logout, "LOGOUT_USER")})
   //          file handling
   server.post("/api/files/upload", (req,res) => {routes.auth_handler(req, res, routes.upload, "FILE_UPLOAD")})
   server.get("/api/files", (req,res) => {routes.auth_handler(req, res, routes.getUsersFiles, "FILE_GET_USERS")})
@@ -46,7 +49,8 @@ function doneReading(){
   server.get("/api/catalog/get_variants", (req,res) => {routes.auth_handler(req, res, routes.get_variants, "GET_BLUEPRINT_VARIANTS")})
   //          desgins handling
   server.post("/api/catalog/designs", (req,res) => {routes.auth_handler(req, res, routes.upload_design, "UPLOAD_DESIGN")})
-  server.get("/api/catalog/designs", (req, res) => {routes.auth_handler(req, res, routes.get_designs, "GET_DESIGNS")})
+  server.get("/api/catalog/designs", (req, res) => { routes.auth_handler(req, res, routes.get_designs, "GET_DESIGNS") })
+  server.get("/api/catalog/designs/:designID", (req, res) => {routes.auth_handler(req, res, routes.get_design, "GET_SPECIFIC_DESIGN")})
   server.post("/api/catalog/design/popularity/:design_id", (req, res) => { routes.auth_handler(req, res, routes.like_design, "LIKE_DESIGN") })
   server.delete("/api/catalog/design/popularity/:design_id", (req, res) => {routes.auth_handler(req, res, routes.dislike_design, "DISLIKE_DESIGN")})
 }

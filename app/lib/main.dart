@@ -5,10 +5,9 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'utilities.dart';
 import 'pages.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 GlobalKey RootWidgetKey = GlobalKey();
-Color primaryColor = Color(0xFFFE6F27);
-Color secondaryColor = Color(0xFF2F2F2F);
+Color primaryColor = Color(0xFF50586C);
+Color secondaryColor = Color(0xFFDCE2F0);
 bool debugMode = true; // DEBUG MODE IS ONLY FOR DEVELOPMENT PORPOUSES AND NOT INTENDED TO BE ENABELD IN AN DEPLOYMENT ENV!
 String api_token = "";
 String username = "";
@@ -25,7 +24,8 @@ void main() async {
 }
 
 class RootWidget extends StatelessWidget {
-  RootWidget({super.key});
+  RootWidget({this.readToken = true, super.key});
+  bool readToken;
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   final StartPageKey = new GlobalKey();
   // This widget is the root of your application.
@@ -35,7 +35,7 @@ class RootWidget extends StatelessWidget {
       title: 'Stylr',
       initialRoute: "/",
       routes: {
-        "/": (context) => new StartPage(key: StartPageKey),
+        "/": (context) => new StartPage(key: StartPageKey, readToken: readToken,),
         "/login": (context) => LoginPage(),
       },
     );

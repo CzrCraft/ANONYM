@@ -1,7 +1,6 @@
 import 'package:Stylr/main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
-import 'package:Stylr/utilities.dart';
 import 'package:flutter/material.dart';
 
 String _apiIP = "https://stylr.go.ro:42069";
@@ -25,6 +24,22 @@ Future login(String username, String password) async {
       "password": password,
     },
   );
+}
+
+Future resetPassword(String securityToken, String password) async {
+  print(securityToken);
+  var result =  await http.post(
+    Uri.parse(_apiIP + "/api/user/resetPassword"),
+    headers: {
+      "password": password,
+      "Authorization": "Bearer $securityToken",
+    },
+  );
+  if(result.statusCode == 200){
+    return true;
+  }else{
+    return false;
+  }
 }
 
 Future signup(String username, String password) async {
@@ -86,13 +101,13 @@ void sendFileToApi(String filePath, String securityToken, Function callback) asy
       filename: filePath.split("/").last
     )
   );
-  var res = await request.send();
+  await request.send();
   callback();
 }
 
 Future getUsersFilesFromApi(String securityToken) async{
-  return http.get(Uri.parse(_apiIP + "/api/files"), headers: {
-    "authorization": "Bearer $api_token",
+  return await http.get(Uri.parse(_apiIP + "/api/files"), headers: {
+    "Authorization": "Bearer $api_token",
   });
 }
 
@@ -102,13 +117,46 @@ Future getDesigns(String securityToken) async {
   });
 }
 
-
-Widget getImageFromApi(String imageID, double height, double width, String securityToken, {GlobalKey? key}){
-  if(key == null){
-    return Image.network(apiIP + "/api/files/" + imageID, width: width, height: height, fit: BoxFit.cover);
-  }else{
-    return Image.network(apiIP + "/api/files/" + imageID, width: width, height: height, fit: BoxFit.cover, key: key);
+Future getDesign(String designID, String securityToken) async {
+  if(designID != ""){
+    return await http.get(Uri.parse(_apiIP + "/api/catalog/designs/" + designID), headers: {
+      "Authorization": "Bearer $securityToken",
+    });
   }
+}
+
+
+Widget getImageFromApi(String imageID, String securityToken, {GlobalKey? key, double height = 0, double width = 0}){
+  if(height != 0){
+    if(width != 0){
+      if(key == null){
+        return Image.network(apiIP + "/api/files/" + imageID, width: width, height: height, fit: BoxFit.cover);
+      }else{
+        return Image.network(apiIP + "/api/files/" + imageID, width: width, height: height, fit: BoxFit.cover, key: key);
+      }
+    }else{
+      if(key == null){
+        return Image.network(apiIP + "/api/files/" + imageID, height: height, fit: BoxFit.cover);
+      }else{
+        return Image.network(apiIP + "/api/files/" + imageID, height: height, fit: BoxFit.cover, key: key);
+      }
+    }
+  }else{
+    if(width != 0){
+      if(key == null){
+        return Image.network(apiIP + "/api/files/" + imageID, width: width, fit: BoxFit.cover);
+      }else{
+        return Image.network(apiIP + "/api/files/" + imageID, width: width, fit: BoxFit.cover, key: key);
+      }
+    }else{
+      if(key == null){
+        return Image.network(apiIP + "/api/files/" + imageID, fit: BoxFit.cover);
+      }else{
+        return Image.network(apiIP + "/api/files/" + imageID, fit: BoxFit.cover, key: key);
+      }
+    }
+  }
+
 }
 
 void likeDesign(String designID, String securityToken, Function callback) async {
@@ -123,12 +171,43 @@ void likeDesign(String designID, String securityToken, Function callback) async 
 }
 
 void dislikeDesign(String designID, String securityToken, Function callback) async {
+  print("$designID");
   var request = await http.delete(Uri.parse(_apiIP + "/api/catalog/design/popularity/" + designID), headers: {
     "Authorization": "Bearer $securityToken",
   });
   if(request.statusCode == 200){
     callback(true);
   }else{
+    print(request.statusCode);
+    print(request.body);
     callback(false);
   }
+}
+
+Future getUsername(String securityToken, {Function? callback}) async {
+  if(callback == null){
+    var request = await http.get(Uri.parse(_apiIP + "/api/user"), headers: {
+      "Authorization": "Bearer $securityToken",
+    });
+    if(request.statusCode == 200){
+      return request.body;
+    }else{
+      return null;
+    }
+  }else{
+    var request = await http.get(Uri.parse(_apiIP + "/api/user"), headers: {
+      "Authorization": "Bearer $securityToken",
+    });
+    if(request.statusCode == 200){
+      callback(request.body);
+    }else{
+      callback(null);
+    }
+  }
+
+}
+void logout(String securityToken) async {
+  await http.post(Uri.parse(_apiIP + "/api/user/logout"), headers: {
+    "Authorization": "Bearer $securityToken",
+  });
 }

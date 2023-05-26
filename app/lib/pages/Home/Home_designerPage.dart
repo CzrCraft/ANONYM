@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: use_build_context_synchronously, prefer_const_constructors, prefer_const_literals_to_create_immutables, must_be_immutable, override_on_non_overriding_member
 
 import 'package:Stylr/main.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +7,8 @@ import 'package:http/http.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'dart:convert';
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'pages.dart';
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:file_picker/file_picker.dart';
-import 'dart:io';
-import 'package:draggable_widget/draggable_widget.dart';
 // dirty solution to get the images to scale with the screen
 // not proud of it, but it'l work
 late BuildContext _listViewContext;
@@ -44,18 +41,59 @@ void _removeImage(Widget image, bool frontImages){
   if(frontImages){
     _frontShirtImages.remove(image);
     _frontShirtImageKeys.remove(image.key);
+    // ignore: invalid_use_of_protected_member
     _editPageKey.currentState?.setState(() {
       
     });
   }
 }
 
+class _customImage extends StatefulWidget {
+  _customImage({required this.imgKey, required this.imgID, super.key});
+  //Image.network(apiIP + "/api/files/" + value, width: getFromPercent("horizontal", 20, context), height: getFromPercent("vertical", 10, context), fit: BoxFit.cover, key: key);
+  double scale = 1.0;
+  double orgHeight = 200;
+  double orgWidth = 200;
+  String imgID;
+  GlobalKey imgKey;
+  @override
+  State<_customImage> createState() => __customImageState();
+}
+
+class __customImageState extends State<_customImage> {
+  @override
+  GlobalKey childKey = GlobalKey();
+  late Image childImage = Image.network(apiIP + "/api/files/" + widget.imgID, height: widget.orgHeight, width: widget.orgWidth,scale: widget.scale, key: childKey);
+  void initState() {
+    widget.orgHeight = childImage.height!;
+    widget.orgWidth = childImage.height!;
+    super.initState();
+  }
+  @override
+  void setScale(double newScale){
+    setState(() {
+      widget.scale = newScale;
+      print(newScale);
+      childKey.currentState!.setState(() {
+        print("something");
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return childImage;
+  }
+}
+
 class _shirtImage extends StatefulWidget {
-  _shirtImage(this.imgX, this.imgY, this.imgId, this.image,{super.key});
+  _shirtImage(this.imageKey, this.imgX, this.imgY, this.imgId, this.image,{super.key});
   double imgX;
   double imgY;
   String imgId;
   Widget image;
+  GlobalKey<__customImageState> imageKey;
+  double scaleRatio = 0;
   bool selected = false;
   @override
   State<_shirtImage> createState() => __shirtImageState();
@@ -67,7 +105,7 @@ class __shirtImageState extends State<_shirtImage> {
 
   void _onHorizontalDragStartHandler(DragStartDetails details) {
     setState(() {
-      widget.imgX = details.globalPosition.dx.floorToDouble();
+      widget.imgX = details.globalPosition.dx.floorToDouble() - 40;
       widget.imgY = getFromPercent("vertical", 45, context) - details.globalPosition.dy.floorToDouble();
     });
   }
@@ -75,14 +113,14 @@ class __shirtImageState extends State<_shirtImage> {
   /// Track starting point of a vertical gesture
   void _onVerticalDragStartHandler(DragStartDetails details) {
     setState(() {
-      widget.imgX = details.globalPosition.dx.floorToDouble();
+      widget.imgX = details.globalPosition.dx.floorToDouble() - 40;
       widget.imgY = getFromPercent("vertical", 45, context) - details.globalPosition.dy.floorToDouble();
     });
   }
 
   void _onDragUpdateHandler(DragUpdateDetails details) {
     setState(() {
-      widget.imgX = details.globalPosition.dx.floorToDouble();
+      widget.imgX = details.globalPosition.dx.floorToDouble() - 40;
       widget.imgY = getFromPercent("vertical", 45, context) - details.globalPosition.dy.floorToDouble();
     });
   }
@@ -90,7 +128,7 @@ class __shirtImageState extends State<_shirtImage> {
   /// Track current point of a gesture
   void _onHorizontalDragUpdateHandler(DragUpdateDetails details) {
     setState(() {
-      widget.imgX = details.globalPosition.dx.floorToDouble();
+      widget.imgX = details.globalPosition.dx.floorToDouble() - 40;
       widget.imgY = getFromPercent("vertical", 45, context) - details.globalPosition.dy.floorToDouble();
     });
   }
@@ -98,7 +136,7 @@ class __shirtImageState extends State<_shirtImage> {
   /// Track current point of a gesture
   void _onVerticalDragUpdateHandler(DragUpdateDetails details) {
     setState(() {
-      widget.imgX = details.globalPosition.dx.floorToDouble();
+      widget.imgX = details.globalPosition.dx.floorToDouble() - 40;
       widget.imgY = getFromPercent("vertical", 45, context) - details.globalPosition.dy.floorToDouble();
     });
   }
@@ -125,10 +163,20 @@ class __shirtImageState extends State<_shirtImage> {
         bottom: widget.imgY,
         left: widget.imgX,
         child: GestureDetector(
-          onHorizontalDragStart: _onHorizontalDragStartHandler,
-          onVerticalDragStart: _onVerticalDragStartHandler,
-          onHorizontalDragUpdate: _onDragUpdateHandler,
-          onVerticalDragUpdate: _onDragUpdateHandler,
+          // onHorizontalDragStart: _onHorizontalDragStartHandler,
+          // onVerticalDragStart: _onVerticalDragStartHandler,
+          // onHorizontalDragUpdate: _onDragUpdateHandler,
+          // onVerticalDragUpdate: _onDragUpdateHandler,
+          onScaleUpdate: (details){
+              var angle = details.rotation;
+              var scale = details.scale;
+              widget.imageKey.currentState!.setScale(scale);
+              print("Angle: $angle");
+              print("Scale: $scale");
+              setState(() {
+                
+              });
+          },
           onLongPress: (){
               setState(() {
                 _removeImage(widget, true);
@@ -182,19 +230,40 @@ class __EditPageState extends State<_EditPage> {
     super.initState();
   }
 
-  Widget getImageToUse(String value, bool detectGestures, {key}){
-    if(detectGestures){
-      if(key != null){
-        return GestureDetector(child: Image.network(apiIP + "/api/files/" + value, width: getFromPercent("horizontal", 20, context), height: getFromPercent("vertical", 10, context), fit: BoxFit.cover, key: key), onLongPress: (){pickedImage(value);},);
+  Widget getImageToUse(String value, bool detectGestures, {dontScale = false, key}){
+    if(value != ""){
+      if(!dontScale){
+        if(detectGestures){
+          if(key != null){
+            return GestureDetector(child: Image.network(apiIP + "/api/files/" + value, width: getFromPercent("horizontal", 20, context), height: getFromPercent("vertical", 10, context), fit: BoxFit.cover, key: key), onLongPress: (){pickedImage(value);},);
+          }else{
+            return GestureDetector(child: Image.network(apiIP + "/api/files/" + value, width: getFromPercent("horizontal", 20, context), height: getFromPercent("vertical", 10, context), fit: BoxFit.cover), onLongPress: (){pickedImage(value);},);
+          }
+        }else{
+          if(key != null){
+            return Image.network(apiIP + "/api/files/" + value, width: getFromPercent("horizontal", 20, context), height: getFromPercent("vertical", 10, context), fit: BoxFit.cover, key: key);
+          }else{
+            return Image.network(apiIP + "/api/files/" + value, width: getFromPercent("horizontal", 20, context), height: getFromPercent("vertical", 10, context), fit: BoxFit.cover);
+          }
+        }
       }else{
-        return GestureDetector(child: Image.network(apiIP + "/api/files/" + value, width: getFromPercent("horizontal", 20, context), height: getFromPercent("vertical", 10, context), fit: BoxFit.cover), onLongPress: (){pickedImage(value);},);
+        if(detectGestures){
+          if(key != null){
+            return GestureDetector(child: Image.network(apiIP + "/api/files/" + value, key: key), onLongPress: (){pickedImage(value);},);
+          }else{
+            return GestureDetector(child: Image.network(apiIP + "/api/files/" + value), onLongPress: (){pickedImage(value);},);
+          }
+        }else{
+          if(key != null){
+            return _customImage(imgID: value, key: key, imgKey: GlobalKey(),);
+          }else{
+            return _customImage(imgID: value, imgKey: GlobalKey(),);
+          }
+        }
       }
+
     }else{
-      if(key != null){
-        return Image.network(apiIP + "/api/files/" + value, width: getFromPercent("horizontal", 20, context), height: getFromPercent("vertical", 10, context), fit: BoxFit.cover, key: key);
-      }else{
-        return Image.network(apiIP + "/api/files/" + value, width: getFromPercent("horizontal", 20, context), height: getFromPercent("vertical", 10, context), fit: BoxFit.cover);
-      }
+      return Container();
     }
   }
 
@@ -202,13 +271,15 @@ class __EditPageState extends State<_EditPage> {
     if(shirtSide == 0){
       setState(() {
         GlobalKey<__shirtImageState> tempKey = GlobalKey();
-        _frontShirtImages.add(_shirtImage(getFromPercent("horizontal", 35, context), getFromPercent("vertical", 20, context), imageId, getImageToUse(imageId, false), key: tempKey));
+        GlobalKey<__customImageState> imgKey = GlobalKey();
+        _frontShirtImages.add(_shirtImage(imgKey, getFromPercent("horizontal", 35, context), getFromPercent("vertical", 20, context), imageId, getImageToUse(imageId, false, dontScale: true, key: imgKey), key: tempKey));
         _frontShirtImageKeys.add(tempKey);
       });
     }else if (shirtSide == 1){
       setState(() {
         GlobalKey<__shirtImageState> tempKey = GlobalKey();
-        _backShirtImages.add(_shirtImage(0, 0, imageId, getImageToUse(imageId, false), key: tempKey));
+        GlobalKey<__customImageState> imgKey = GlobalKey();
+        _backShirtImages.add(_shirtImage(imgKey, 0, 0, imageId, getImageToUse(imageId, false), key: tempKey));
         _backShirtImageKeys.add(tempKey);
       });
     }

@@ -46,6 +46,39 @@
 					"response": []
 				},
 				{
+					"name": "Get Username",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "username",
+								"value": "testacc",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "password",
+								"value": "testacc",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "https://localhost:42069/api/user",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "42069",
+							"path": [
+								"api",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Signup",
 					"request": {
 						"method": "GET",
@@ -148,6 +181,40 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get all files",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"contentType": "multipart/form-data",
+									"type": "file",
+									"src": "/C:/Users/czrcr/Desktop/ANONYM/api/postman/file_tester_upload.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://localhost:42069/api/files",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "42069",
+							"path": [
+								"api",
+								"files"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -155,87 +222,263 @@
 			"name": "Catalog",
 			"item": [
 				{
-					"name": "Get blueprints",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://localhost:42069/api/catalog/blueprints",
-							"protocol": "https",
-							"host": [
-								"localhost"
-							],
-							"port": "42069",
-							"path": [
-								"api",
-								"catalog",
-								"blueprints"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get designs",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://localhost:42069/api/catalog/designs",
-							"protocol": "https",
-							"host": [
-								"localhost"
-							],
-							"port": "42069",
-							"path": [
-								"api",
-								"catalog",
-								"designs"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Upload Design",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "print_provider",
-								"value": "212",
-								"type": "text"
-							},
-							{
-								"key": "blueprint_id",
-								"value": "313",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"properties\": \"n word\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+					"name": "Designs",
+					"item": [
+						{
+							"name": "Get designs",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:42069/api/catalog/designs",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "42069",
+									"path": [
+										"api",
+										"catalog",
+										"designs"
+									]
 								}
-							}
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "https://localhost:42069/api/catalog/designs",
-							"protocol": "https",
-							"host": [
-								"localhost"
-							],
-							"port": "42069",
-							"path": [
-								"api",
-								"catalog",
-								"designs"
-							]
+						{
+							"name": "Get Specific Design",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:42069/api/catalog/designs/e2OH5fYNHOsOY5jH068qThvj1JKXo1ttpiNwqfAl6uDrk9V6Qiu1IXsn9OtGQvO9kRU7syIvbdb4qVLiK1Il7P10aE4fBh7Bv3Of",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "42069",
+									"path": [
+										"api",
+										"catalog",
+										"designs",
+										"e2OH5fYNHOsOY5jH068qThvj1JKXo1ttpiNwqfAl6uDrk9V6Qiu1IXsn9OtGQvO9kRU7syIvbdb4qVLiK1Il7P10aE4fBh7Bv3Of"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Upload Design",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "print_provider",
+										"value": "1",
+										"type": "text"
+									},
+									{
+										"key": "blueprint_id",
+										"value": "111",
+										"type": "text"
+									},
+									{
+										"key": "variant_id",
+										"value": "222",
+										"type": "text"
+									},
+									{
+										"key": "design_name",
+										"value": "test design",
+										"type": "text"
+									},
+									{
+										"key": "thumbnail",
+										"value": "864YaqlfYYPlatT2xIcvjw8AD6qhHsigIOOizegn8uPAiyKLou",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"properties\": {\r\n        \"print_areas\": {\r\n          \"front\": [\r\n            {\r\n                \"src\": \"https://images.example.com/image.png\",\r\n                \"scale\": 0.15,\r\n                \"x\": 0.80,\r\n                \"y\": 0.34,\r\n                \"angle\": 215\r\n            },\r\n            {\r\n                \"src\": \"https://images.example.com/image2.png\",\r\n                \"scale\": 1,\r\n                \"x\": 0.5,\r\n                \"y\": 0.5,\r\n                \"angle\": 0\r\n            }\r\n          ],\r\n          \"back\": [\r\n            {\r\n                \"src\": \"https://images.example.com/image3.png\",\r\n                \"scale\": 1,\r\n                \"x\": 0.5,\r\n                \"y\": 0.5,\r\n                \"angle\": 0\r\n            }\r\n          ]\r\n        }\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:42069/api/catalog/designs",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "42069",
+									"path": [
+										"api",
+										"catalog",
+										"designs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Like design",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "designID",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"properties\": {\r\n        \"print_areas\": {\r\n          \"front\": [\r\n            {\r\n                \"src\": \"https://images.example.com/image.png\",\r\n                \"scale\": 0.15,\r\n                \"x\": 0.80,\r\n                \"y\": 0.34,\r\n                \"angle\": 215\r\n            },\r\n            {\r\n                \"src\": \"https://images.example.com/image2.png\",\r\n                \"scale\": 1,\r\n                \"x\": 0.5,\r\n                \"y\": 0.5,\r\n                \"angle\": 0\r\n            }\r\n          ],\r\n          \"back\": [\r\n            {\r\n                \"src\": \"https://images.example.com/image3.png\",\r\n                \"scale\": 1,\r\n                \"x\": 0.5,\r\n                \"y\": 0.5,\r\n                \"angle\": 0\r\n            }\r\n          ]\r\n        }\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:42069/api/catalog/design/popularity/e2OH5fYNHOsOY5jH068qThvj1JKXo1ttpiNwqfAl6uDrk9V6Qiu1IXsn9OtGQvO9kRU7syIvbdb4qVLiK1Il7P10aE4fBh7Bv3Of",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "42069",
+									"path": [
+										"api",
+										"catalog",
+										"design",
+										"popularity",
+										"e2OH5fYNHOsOY5jH068qThvj1JKXo1ttpiNwqfAl6uDrk9V6Qiu1IXsn9OtGQvO9kRU7syIvbdb4qVLiK1Il7P10aE4fBh7Bv3Of"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Dislike Design",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "print_provider",
+										"value": "212",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "blueprint_id",
+										"value": "313",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "variant_id",
+										"value": "111",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "design_name",
+										"value": "testName",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "thumbnail",
+										"value": "PZLhmkSyvyNCLwrb5DqdkX7bFBYZSBudDjubXSe3eeXFt8ostL",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"properties\": {\r\n        \"print_areas\": {\r\n          \"front\": [\r\n            {\r\n                \"src\": \"https://images.example.com/image.png\",\r\n                \"scale\": 0.15,\r\n                \"x\": 0.80,\r\n                \"y\": 0.34,\r\n                \"angle\": 215\r\n            },\r\n            {\r\n                \"src\": \"https://images.example.com/image2.png\",\r\n                \"scale\": 1,\r\n                \"x\": 0.5,\r\n                \"y\": 0.5,\r\n                \"angle\": 0\r\n            }\r\n          ],\r\n          \"back\": [\r\n            {\r\n                \"src\": \"https://images.example.com/image3.png\",\r\n                \"scale\": 1,\r\n                \"x\": 0.5,\r\n                \"y\": 0.5,\r\n                \"angle\": 0\r\n            }\r\n          ]\r\n        }\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:42069/api/catalog/design/popularity/e2OH5fYNHOsOY5jH068qThvj1JKXo1ttpiNwqfAl6uDrk9V6Qiu1IXsn9OtGQvO9kRU7syIvbdb4qVLiK1Il7P10aE4fBh7Bv3Of",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "42069",
+									"path": [
+										"api",
+										"catalog",
+										"design",
+										"popularity",
+										"e2OH5fYNHOsOY5jH068qThvj1JKXo1ttpiNwqfAl6uDrk9V6Qiu1IXsn9OtGQvO9kRU7syIvbdb4qVLiK1Il7P10aE4fBh7Bv3Of"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
+				},
+				{
+					"name": "Blueprints",
+					"item": [
+						{
+							"name": "Get blueprints",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://localhost:42069/api/catalog/blueprints",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "42069",
+									"path": [
+										"api",
+										"catalog",
+										"blueprints"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get variants",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "printify_id",
+										"value": "3",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://localhost:42069/api/catalog/get_variants",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "42069",
+									"path": [
+										"api",
+										"catalog",
+										"get_variants"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		}
@@ -245,7 +488,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "wAFvYN8WoPrWbxmiL8kHzffufvC7Z1MSS9FV5FVFTRvdVBBQ2s",
+				"value": "MoSqESmNvGKR8zXOCKnc67DRXFtlB6DFzgvF6btZMBlvqCHUtz",
 				"type": "string"
 			}
 		]

@@ -133,6 +133,36 @@ module.exports = {
             res.send("error")
         }
     },
+    // ik the names i used are really confusing
+    // i'l try to stop using underline char
+    resetPassword: async function(req, res, token){
+        try {
+            const userModel = mongoose.model("user", schemas.UserSchema)
+            const securityTokenModel = mongoose.model("security_token", schemas.SecurityTokenSchema)
+            let securityTokenRes = await securityTokenModel.findOne({ token: await sha256(token) }).exec()
+            if (securityTokenRes != null) {
+                userModel.updateOne({ username: securityTokenRes["username"] }, { password: await sha256(req.headers["password"]) }).exec()
+                res.sendStatus(200)
+            } else {
+                res.sendStatus(400);
+            }
+        }catch(err){
+            console.log(err)
+            res.statusCode = 400
+            res.send("error")
+        }
+    },
+    logout: async function(req, res, token){
+        try {
+            const securityTokenModel = mongoose.model("security_token", schemas.SecurityTokenSchema)
+            securityTokenModel.updateOne({ token: await sha256(token) }, {token: await require("random-token").create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(100)}).exec()
+            res.sendStatus(200)
+        }catch(err){
+            console.log(err)
+            res.statusCode = 400
+            res.send("error")
+        }
+    },
     
     upload: async function(req,res, raw_token){
         try{
@@ -196,7 +226,6 @@ module.exports = {
     auth_handler: async function (req, res, route_func, route_name) {
         console.log("----------------------------");
         console.log("Verification attepmted for " + route_name);
-        console.log(req.headers);
         try {
             if (await checkToken(req.headers.authorization.split(" ")[1])) {
                 console.log("Token was successfully verified: " + req.headers.authorization.split(" ")[1])
@@ -281,6 +310,22 @@ module.exports = {
             console.log(err);
         }
     },
+    get_design: async function(req, res, token){
+        try{
+            let designModel = mongoose.model("design", schemas.DesignSchema);
+            let designID = req.params.designID
+            let result = await designModel.findOne({design_id: designID}, "-_id -__v").exec()
+            if(result != null){
+                res.status = 200;
+                res.send(result);
+            }else{
+                res.sendStatus(500);
+            }
+        }catch(err){
+            res.sendStatus(500);
+            console.log(err);
+        }
+    },
     like_design: async function(req, res, token){
         try{
             let designModel = mongoose.model("design", schemas.DesignSchema);
@@ -327,7 +372,6 @@ module.exports = {
                     if (likedBy == "") {
                         res.sendStatus(400);
                     } else {
-                        console.log(likedBy);
                         if (likedBy.includes(tokenResult["username"])) {
                             await designModel.updateOne({ design_id: designID }, { like_count: parseInt(result["like_count"]) - 1, liked_by: (result["liked_by"].replace("," + tokenResult["username"], "")) }).exec()
                             res.sendStatus(200);
@@ -438,6 +482,16 @@ module.exports = {
     },
     ping: async function (req, res, token) {
         res.sendStatus(200);
+    },
+    get_username: async function (req, res, token) {
+        try {
+            let security_token = mongoose.model("security_token", schemas.SecurityTokenSchema)
+            let tokenResult = await security_token.findOne({ token: await sha256(token) }, "-_id -__v").exec()
+            res.status = 200;
+            res.send(tokenResult["username"]);
+        } catch (err) {
+            console.log(err);
+        }
     }
 }
 

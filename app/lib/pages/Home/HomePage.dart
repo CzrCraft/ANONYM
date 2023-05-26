@@ -1,4 +1,4 @@
-// ignore_for_file: sort_child_properties_last
+// ignore_for_file: sort_child_properties_last, must_be_immutable
 
 import 'package:Stylr/main.dart';
 import 'package:Stylr/pages/Home/Home_profilePage.dart';
@@ -14,11 +14,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  @override
+  
   Widget childPage = Container();
   // Everytime the user switches between lets say the catalogue and their profile a new HomePage
   // widget will be created with the right child page so that there is no need for multiple Navigators
   // and the code remains somewhat clean
+  @override
   void initState() {
     // when the widget is initialised it sets it's child page based on the id passed as a param
     switch (widget.childPageID) {
