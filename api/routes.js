@@ -226,6 +226,7 @@ module.exports = {
     auth_handler: async function (req, res, route_func, route_name) {
         console.log("----------------------------");
         console.log("Verification attepmted for " + route_name);
+        console.log("from IP: " + req.ip)
         try {
             if (await checkToken(req.headers.authorization.split(" ")[1])) {
                 console.log("Token was successfully verified: " + req.headers.authorization.split(" ")[1])
@@ -266,7 +267,7 @@ module.exports = {
     },
     
     upload_design: async function(req, res, token){
-        try{
+        try {
             let securityTokenModel = mongoose.model("security_token", schemas.SecurityTokenSchema);
             let designModel = mongoose.model("design", schemas.DesignSchema)
             let author_name = (await securityTokenModel.findOne({ token: await sha256(token) }).exec()).username;
@@ -277,14 +278,12 @@ module.exports = {
             let thumnbnail_id = req.headers["thumbnail"]
             let design_creation_date = Math.round(Date.now() / 1000)
             let design_properties = JSON.parse(JSON.stringify(req.body.properties))
-
             let designID = await require("random-token").create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(100)
             while ((await designModel.findOne({ design_id: designID }).exec()) != null) {
                 designID = await require("random-token").create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(100)
             }
             let result = await designModel.create({liked_by: "", design_id: designID, thumbnail_id: thumnbnail_id, designName: designName, author: author_name, like_count: 0, print_provider_id: print_provider, blueprint_id: blueprint, creation_date: design_creation_date, properties: design_properties, variant_id: variant_id})
             if (result != null) {
-                console.log (design_properties);
                 res.sendStatus(200);
             }else{
                 res.sendStatus(400);

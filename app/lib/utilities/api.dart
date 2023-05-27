@@ -1,7 +1,9 @@
-import 'package:Stylr/main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
+import 'dart:io' as io;
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'dart:convert';
 
 String _apiIP = "https://stylr.go.ro:42069";
 String apiIP = _apiIP;
@@ -90,24 +92,39 @@ void get_variants(String security_token, String blueprintID, Function callback) 
   }
 }
 
-void sendFileToApi(String filePath, String securityToken, Function callback) async {
+void sendFileToApi(String filePath, String securityToken, Function callback, {bool returnToken = false}) async {
   var request = await http.MultipartRequest('POST', Uri.parse(_apiIP + "/api/files/upload"));
   request.headers["authorization"] = "Bearer $securityToken";
   request.files.add(
     http.MultipartFile(
       'file',
-      File(filePath).readAsBytes().asStream(),
-      File(filePath).lengthSync(),
+      io.File(filePath).readAsBytes().asStream(),
+      io.File(filePath).lengthSync(),
       filename: filePath.split("/").last
     )
   );
-  await request.send();
-  callback();
+  var response = await request.send();
+  if(returnToken){
+    callback(await response.stream.bytesToString());
+  }else{
+    callback();
+  }
+}
+
+Future sendDesignToApi({required Map<String, String> headers, required Map<String, dynamic> designBody, required String securityToken}) async {
+  headers["Authorization"] = "Bearer $securityToken";
+  headers["content-type"] = "application/json";
+  var request = await http.post(Uri.parse(_apiIP + "/api/catalog/designs"), headers: headers, body: jsonEncode(<String, dynamic>{"properties": designBody}));
+  if(request.statusCode == 200){
+    return true;
+  }else{
+    return false;
+  }
 }
 
 Future getUsersFilesFromApi(String securityToken) async{
   return await http.get(Uri.parse(_apiIP + "/api/files"), headers: {
-    "Authorization": "Bearer $api_token",
+    "Authorization": "Bearer $securityToken",
   });
 }
 
