@@ -34,6 +34,7 @@ class _HomePageState extends State<HomePage> {
         break;
       case 3:
         childPage = ProfilePage(key: GlobalKey());
+        break;
     }
     super.initState();
   }

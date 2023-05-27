@@ -134,6 +134,13 @@ Future getDesigns(String securityToken) async {
   });
 }
 
+Future searchDesigns(String searchQuery, String securityToken) async {
+  return await http.get(Uri.parse(_apiIP + "/api/catalog/designs/search"), headers: {
+    "Authorization": "Bearer $securityToken",
+    "query": searchQuery,
+  });
+}
+
 Future getDesign(String designID, String securityToken) async {
   if(designID != ""){
     return await http.get(Uri.parse(_apiIP + "/api/catalog/designs/" + designID), headers: {

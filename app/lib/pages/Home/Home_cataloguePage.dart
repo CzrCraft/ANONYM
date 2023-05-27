@@ -5,6 +5,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:Stylr/main.dart';
 import 'package:flutter/material.dart';
 import '../utilities.dart';
+import 'package:flutter/scheduler.dart';
+
+// all the code is copied from CataloguePage cuz why not
 
 class _DesignWidget extends StatefulWidget {
   _DesignWidget({required this.properties, required this.designID, required this.name, required this.author, required this.like_count, required this.thumbnailId, this.isLiked = false, super.key});
@@ -108,8 +111,7 @@ class __DesignWidgetState extends State<_DesignWidget> {
                                   child: Text("View", style: TextStyle(color: secondaryColor)),
                                   onPressed: (){
                                     // changing to _ViewPage widget
-                                    print("tapped");
-                                      Navigator.push(context, animatedRoute(_ViewPage(designID: widget.designID,)));
+                                    Navigator.push(context, animatedRoute(_ViewPage(designID: widget.designID,)));
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: primaryColor,
@@ -137,99 +139,94 @@ class CataloguePage extends StatefulWidget {
   const CataloguePage({super.key});
 
   @override
-  State<CataloguePage> createState() => _CataloguePageState();
+  State<CataloguePage> createState() => _CataloguePage();
 }
-class _CataloguePageState extends State<CataloguePage> {
+class _CataloguePage extends State<CataloguePage> with TickerProviderStateMixin {
   List<Widget> designList = List.empty(growable: true);
   bool ran = false;
+  bool firstTime = true;
+  String searchQuery = "GET_ALL";
+  String temp = "";
+  // rebuild widget
+  bool needsRebuilding = false;
+  late Ticker _ticker;
+  Future<void> setup(String apiData) async{
+    if(!ran){
+      designList.clear();
+      List<dynamic> jsonApiData = jsonDecode(apiData);
+      // really shitty solution but idgaf💀💀💀
+      List<String> designIDs = List.empty(growable: true);
+      designIDs.clear();
+      for(var design in jsonApiData){
+        // RLLY IMPORTANT DON'T CHANGE
+        // changed it anyways💀
+        // shit ass code
+        if((designIDs.contains(design["design_id"]))){  
+          continue;
+        }else{
+          designIDs.add(design["design_id"]);
+        }
+        String designName = design["designName"];
+        String designAuthor = design["author"];
+        String designID = design["design_id"];
+        String thumbnailId = design["thumbnail_id"];
+        String username = await getUsername(api_token);
+        bool isLiked = false;
+        if(design["liked_by"].contains("," + username)){
+          isLiked = true;
+          break;
+        }
+        int likeCount = design["like_count"];
+        Map<String, dynamic> designFeatures = design["properties"];
+        // add the design to the ListView widget that's going to be shown on the screen
+        
+        designList.add(_DesignWidget(properties: designFeatures, name: designName, author: designAuthor, like_count: likeCount, thumbnailId: thumbnailId, isLiked: isLiked,designID: designID,));
+        designIDs.add(designID);
+      }
+      // DONT CHANGE THIS 
+      // VERY IMPORTANT
+      // OR ELSE YOU'RE GOING TO FUCK EVERYTHING UP💀
+      setState(() {
+        ran = true;
+      });
+    }
+  }
+  @override
+  void initState() {
+    _ticker = super.createTicker((Duration elapsedTime) {
+        // do something
+        if(needsRebuilding){
+          setState(() {
+            setup(temp);
+            needsRebuilding = false;
+            temp = "";
+          });
+        }
+    });
+    _ticker.start();
+
+    super.initState();
+  }
   @override
   // fuck this code
   // dont change important
-  // rlly bad hack tho
+  // rlly bad hack though
   Widget build(BuildContext context) {
-    setThemeColors(true);
-    void setup(String apiData) async{
-      if(!ran){
-        List<dynamic> jsonApiData = jsonDecode(apiData);
-        // really shitty solution but idgaf
-        List<String> designIDs = List.empty(growable: true);
-        for(var design in jsonApiData){
-          // RLLY IMPORTANT DON'T CHANGE
-          String designName = "";
-          String designAuthor = "";
-          String designID = "";
-          String thumbnailId = "";
-          bool isLiked = false;
-          int likeCount = 0;
-          Map<String, dynamic> designFeatures = {};
-          // loop through the values in the response
-          // DONT CHANGE THIS 
-          bool doPush = true;
-          for(var entry in design.entries){
-            var key = entry.key;
-            var value = entry.value;
-            // asign each value to a variable
-            // don't ask why i did it this way
-            // it wrote this at 2:03 am
-            switch(key){
-              case "like_count":
-                likeCount = value;
-                break;
-              case "author":
-                designAuthor = value;
-                break;
-              case "designName":
-                designName = value;
-                break;
-              case "properties":
-                designFeatures = value;
-                break;
-              case "thumbnail_id":
-                thumbnailId = value;
-                break;
-              case "design_id":
-                designID = value;
-                if((designIDs.contains(designID))){
-                  doPush = false;
-                }
-                break;
-              case "liked_by":
-                // fucking pain in the ass to get working
-                // spent like 3 hours debugging this shit
-                String username = await getUsername(api_token);
-                  if(value.contains("," + username)){
-                    print("e");
-                    isLiked = true;
-                    break;
-                  }else{
-                    break;
-                  }
-            }
-          }
-          if(doPush){
-            // add the design to the ListView widget that's going to be shown on the screen
-            designList.add(_DesignWidget(properties: designFeatures, name: designName, author: designAuthor, like_count: likeCount, thumbnailId: thumbnailId, isLiked: isLiked,designID: designID,));
-          }else{
-            doPush = true;
-          }
-          
-        }
-        setState(() {
-          // DONT CHANGE THIS 
-          // VERY IMPORTANT
-          ran = true;
-        });
-      }
 
-    }
     return FutureBuilder(
-      future: getDesigns(api_token),
+      future: searchDesigns(searchQuery, api_token),
       builder: (context, snapshot){
           if(snapshot.hasData) {
           // setup designs
           // have to use seperate function because i need to use await
           // when it's done it calls setState() with the widgets put in the ListView
-          setup(snapshot.data.body.replaceAll(RegExp(r"\\"), ""));
+          if(firstTime){
+            needsRebuilding = true;
+            temp = snapshot.data.body.replaceAll(RegExp(r"\\"), "");
+            firstTime = false;
+          }
+          
+          designList = designList.toSet().toList();
           return Center(child: ListView(
             children: [
               Padding(
@@ -257,8 +254,18 @@ class _CataloguePageState extends State<CataloguePage> {
                     fontWeight: FontWeight.w500
                   ),
                   cursorColor: primaryColor,
-                  onSubmitted: (input){
+                  onChanged: (input){
                     print(input);
+                    if(input.trim() == ""){
+                      // WHY DOESN'T IT FUCKING GET ALL THE DESIGNS WHEN SEARCH IS EMPTY
+                      // this takes years off my life
+                      searchQuery = "GET_ALL";
+                    }else{
+                      searchQuery = input;
+                    }
+                    ran = false;
+                    temp = snapshot.data.body.replaceAll(RegExp(r"\\"), "");
+                    needsRebuilding = true;
                   },
                 ),
               ),

@@ -50,6 +50,7 @@ function doneReading(){
   //          desgins handling
   server.post("/api/catalog/designs", (req,res) => {routes.auth_handler(req, res, routes.upload_design, "UPLOAD_DESIGN")})
   server.get("/api/catalog/designs", (req, res) => { routes.auth_handler(req, res, routes.get_designs, "GET_DESIGNS") })
+  server.get("/api/catalog/designs/search", (req, res) => { routes.auth_handler(req, res, routes.search_designs, "SEARCH_DESIGNS") })
   server.get("/api/catalog/designs/:designID", (req, res) => {routes.auth_handler(req, res, routes.get_design, "GET_SPECIFIC_DESIGN")})
   server.post("/api/catalog/design/popularity/:design_id", (req, res) => { routes.auth_handler(req, res, routes.like_design, "LIKE_DESIGN") })
   server.delete("/api/catalog/design/popularity/:design_id", (req, res) => {routes.auth_handler(req, res, routes.dislike_design, "DISLIKE_DESIGN")})

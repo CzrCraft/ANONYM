@@ -508,6 +508,7 @@ class __EditPageState extends State<_EditPage> {
                                                                           TextButton(
                                                                             onPressed: () {
                                                                               Navigator.pop(context, 'Hooray');
+                                                                              Navigator.push(context, animatedRoute(HomePage(0)));
                                                                             },
                                                                             child: Text('Hooray', style: TextStyle(color: primaryColor)),
                                                                           ),

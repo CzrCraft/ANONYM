@@ -310,6 +310,33 @@ module.exports = {
             console.log(err);
         }
     },
+    search_designs: async function(req, res, token){
+        try {
+            if (req.headers["query"] == "GET_ALL") {
+                let designModel = mongoose.model("design", schemas.DesignSchema);
+                let result = await designModel.find({}, "-_id -print_provider_id -__v -print_provider_id -blueprint_id -variant_id -creation_date").sort({like_count: -1}).exec()
+                if(result != null){
+                    res.status = 200;
+                    res.send(result);
+                }else{
+                    res.sendStatus(500);
+                }
+            } else {
+                let designModel = mongoose.model("design", schemas.DesignSchema);
+                const regexPattern = new RegExp("^" + req.headers["query"]);
+                let result = await designModel.find({designName: regexPattern}, "-_id -print_provider_id -__v -print_provider_id -blueprint_id -variant_id -creation_date").sort({like_count: -1}).exec()
+                if(result != null){
+                    res.status = 200;
+                    res.send(result);
+                }else{
+                    res.sendStatus(400);
+                }
+            }
+        }catch(err){
+            res.sendStatus(500);
+            console.log(err);
+        }
+    },
     get_design: async function(req, res, token){
         try{
             let designModel = mongoose.model("design", schemas.DesignSchema);
