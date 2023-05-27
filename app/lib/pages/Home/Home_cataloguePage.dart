@@ -456,7 +456,21 @@ class __ViewPageState extends State<_ViewPage> {
                               backgroundColor: primaryColor
                             ),
                             onPressed: (){
-                              print("b");
+                              showDialog(context: context, 
+                                builder: (context) => AlertDialog(
+                                  title: Text("Placed dummy order!", style: TextStyle(color: primaryColor),),
+                                  backgroundColor: secondaryColor,
+                                  content: Text("(it isn't real it's just placed in our database)", style: TextStyle(color: primaryColor),),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context, 'Ok');
+                                      },
+                                      child: Text('Ok', style: TextStyle(color: primaryColor)),
+                                    ),
+                                  ],
+                                )
+                              );
                               // TODO: ADD ORDERING LOGIC
                             },
                           ),
