@@ -9,7 +9,6 @@ import 'package:flutter/scheduler.dart';
 
 int _resultState =
     0; //using local variable because it would be way to complicated to use GlobalKey's
-
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -28,6 +27,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       ""; // ex: when you input your username its at stage 2, etc..
   String password = "";
   late Ticker _ticker;
+  // going to use this context to show a popup
   @override
   void initState() {
     super.initState();
@@ -44,8 +44,23 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         try {
           // this is to avoid crashing the app if it can't pop the widget
           if (Navigator.canPop(context)) {
-            _ticker.stop();
-            Navigator.pop(context);
+            showDialog(context: context, 
+              builder: (context) => AlertDialog(
+                title: Text("The password is incorrect", style: TextStyle(color: primaryColor),),
+                backgroundColor: secondaryColor,
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      _ticker.stop();
+                      Navigator.pop(context, 'Ok');
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: Text('Ok', style: TextStyle(color: primaryColor)),
+                  ),
+                ],
+              )
+            );
           }
         } catch (err) {
           print(err);
@@ -53,8 +68,23 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       } else if (_resultState == 3) {
         try {
           if (Navigator.canPop(context)) {
-            _ticker.stop();
-            Navigator.pop(context);
+            showDialog(context: context, 
+              builder: (context) => AlertDialog(
+                title: Text("The username is incorrect", style: TextStyle(color: primaryColor),),
+                backgroundColor: secondaryColor,
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      _ticker.stop();
+                      Navigator.pop(context, 'Ok');
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: Text('Ok', style: TextStyle(color: primaryColor)),
+                  ),
+                ],
+              )
+            );
           }
         } catch (err) {
           print(err);

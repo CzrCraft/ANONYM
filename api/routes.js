@@ -154,6 +154,7 @@ module.exports = {
     },
     logout: async function(req, res, token){
         try {
+            // set token to something random so that it isn't useable anymore
             const securityTokenModel = mongoose.model("security_token", schemas.SecurityTokenSchema)
             securityTokenModel.updateOne({ token: await sha256(token) }, {token: await require("random-token").create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')(100)}).exec()
             res.sendStatus(200)

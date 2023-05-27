@@ -37,8 +37,23 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
         try {
           // this is to avoid crashing the app if it can't pop the widget
           if (Navigator.canPop(context)) {
-            _ticker.stop();
-            Navigator.pop(context);
+            showDialog(context: context, 
+              builder: (context) => AlertDialog(
+                title: Text("The users already exists", style: TextStyle(color: primaryColor),),
+                backgroundColor: secondaryColor,
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      _ticker.stop();
+                      Navigator.pop(context, 'Ok');
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: Text('Ok', style: TextStyle(color: primaryColor)),
+                  ),
+                ],
+              )
+            );
           }
         } catch (err) {
           print(err);
