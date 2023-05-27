@@ -161,9 +161,10 @@ class _CataloguePage extends State<CataloguePage> with TickerProviderStateMixin 
         // RLLY IMPORTANT DON'T CHANGE
         // changed it anyways💀
         // shit ass code
-        if((designIDs.contains(design["design_id"]))){  
+        if((designIDs.contains(design["design_id"]))){ 
           continue;
         }
+        // du bist giftig wa wa wa rammstein
         String designName = design["designName"];
         String designAuthor = design["author"];
         String designID = design["design_id"];
@@ -172,12 +173,10 @@ class _CataloguePage extends State<CataloguePage> with TickerProviderStateMixin 
         bool isLiked = false;
         if(design["liked_by"].contains("," + username)){
           isLiked = true;
-          break;
         }
         int likeCount = design["like_count"];
         Map<String, dynamic> designFeatures = design["properties"];
         // add the design to the ListView widget that's going to be shown on the screen
-        
         designList.add(_DesignWidget(properties: designFeatures, name: designName, author: designAuthor, like_count: likeCount, thumbnailId: thumbnailId, isLiked: isLiked,designID: designID,));
         designIDs.add(designID);
       }
@@ -191,7 +190,6 @@ class _CataloguePage extends State<CataloguePage> with TickerProviderStateMixin 
   }
   @override
   void dispose() {
-    // TODO: implement dispose
     _ticker.dispose();
     super.dispose();
   }
@@ -329,6 +327,8 @@ class __ViewPageState extends State<_ViewPage> {
         }
       }
     }
+    // mein hattem kald so jung und doch so alt
+    // deutschland go brr
     Widget iconWidget1;
     if(widget.isLiked){
       iconWidget1 = Icon(Icons.thumb_up, color: primaryColor);
@@ -346,7 +346,6 @@ class __ViewPageState extends State<_ViewPage> {
           orgHeight = responseData["properties"]["orgHeight"];
           orgWidth = responseData["properties"]["orgWidth"];
           thumbnailID = responseData["thumbnail_id"];
-          double scaleRatio = orgWidth / getFromPercent("horizontal", 92, context);
           setupLikeButton(responseData["liked_by"]);
           List<Widget> childrenWidget = List.empty(growable: true);
           childrenWidget.add(Image.asset("assets/graphics/shirt_front_no_bg.png", 
@@ -355,9 +354,10 @@ class __ViewPageState extends State<_ViewPage> {
                             ));
           for(dynamic img in properties){
             print(img);
-            double newX = getFromPercent("horizontal", 90, context) / img["x"];
-            double newY = getFromPercent("vertical", 105, context) / img["y"];
-            childrenWidget.add(Positioned(child: Image.network(apiIP + "/api/files/" + img["src"], scale: img["scale"] / scaleRatio), bottom: newY, left: newX));
+            double newX = getFromPercent("horizontal", 95, context) * img["x"];
+            double newY = getFromPercent("vertical", 110, context) * img["y"];
+            print(newX);
+            childrenWidget.add(Positioned(child: Image.network(apiIP + "/api/files/" + img["src"], scale: img["scale"].toDouble() / getFromPercent("horizontal", 0.294, context)), bottom: newY, left: newX));
           }
           return Container(
             color: primaryColor,

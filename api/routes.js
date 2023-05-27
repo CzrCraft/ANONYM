@@ -443,16 +443,68 @@ module.exports = {
         }
     },
     get_variants: async function (req, response, token) {
-        try {
-            const httpResponse1 = await got.get("https://api.printify.com/v1/catalog/blueprints/" + req.headers.printify_id + "/print_providers.json", {headers: { "Authorization": "Bearer " + printifyApiToken }})
-            let parsedResult = await JSON.parse(httpResponse1.body);
-            let resultingResponse = [];
-            // get every print provider's variants and compile them into one big list.
-            for(const element of parsedResult){
+        // disabling get_variants returning all of the varitants because
+        // it would require extra logic checking valid variants
+        // which also takes time
+        var enabled = false;
+        if (enabled) {
+            try {
+                const httpResponse1 = await got.get("https://api.printify.com/v1/catalog/blueprints/" + req.headers.printify_id + "/print_providers.json", {headers: { "Authorization": "Bearer " + printifyApiToken }})
+                let parsedResult = await JSON.parse(httpResponse1.body);
+                let resultingResponse = [];
+                // get every print provider's variants and compile them into one big list.
+                for(const element of parsedResult){
+                    const httpResponse2 = await got.get("https://api.printify.com/v1/catalog/blueprints/" + req.headers.printify_id + "/print_providers/" + element["id"] + "/variants.json", { headers: { "Authorization": "Bearer " + printifyApiToken, "show-out-of-stock": "0"} })
+                    let parsedResult2 = await JSON.parse(httpResponse2.body);
+                    for(const element2 of parsedResult2["variants"]) {
+                        // response is gonna be [id, color, size, canPrintOnTheFront, canPrintOnTheBack, frontHeight, frontWidth, backHeight, backWidth, printProviderId]
+                        // the canPrintOnTheFront//TheBack are gonna be booleans
+                        let frontPlaceholder;
+                        let backPlaceholder;
+                        // check if you can print on the front and back
+                        let doesFront = false;
+                        let doesBack = false;
+
+                        // get the front and back max height and width for printing
+                        for(const element3 of element2["placeholders"]){
+                            if (element3["position"] == "front") {
+                                frontPlaceholder = element3
+                                doesFront = true
+                            } else if(element3["position"] == "back"){
+                                backPlaceholder = element3;
+                                doesBack = true
+                            }
+                        }
+                        if (doesFront) {
+                            if (doesBack) {
+                                await resultingResponse.push([element2["id"], element2["options"]["color"], element2["options"]["size"], true, true, frontPlaceholder["height"], frontPlaceholder["width"], backPlaceholder["height"], backPlaceholder["width"], element["id"]])
+                            } else {
+                                await resultingResponse.push([element2["id"], element2["options"]["color"], element2["options"]["size"], true, false, frontPlaceholder["height"], frontPlaceholder["width"], element["id"]])
+                            }
+                        } else {
+                            if (doesBack) {
+                                await resultingResponse.push([element2["id"], element2["options"]["color"], element2["options"]["size"], false, true, backPlaceholder["height"], backPlaceholder["width"], element["id"]])
+                            } else {
+                                await resultingResponse.push([element2["id"], element2["options"]["color"], element2["options"]["size"], false, false, element["id"]])
+                            }
+                        }
+                    };
+                };
+                response.status(200).send(resultingResponse);
+            } catch (err) {
+                console.log(err);
+            }
+        } else {
+            try {
+                const httpResponse1 = await got.get("https://api.printify.com/v1/catalog/blueprints/" + req.headers.printify_id + "/print_providers.json", {headers: { "Authorization": "Bearer " + printifyApiToken }})
+                let parsedResult = await JSON.parse(httpResponse1.body);
+                let resultingResponse = [];
+                // get the first print provider's variants and compile them into one big list.
+                let element = parsedResult[0];
                 const httpResponse2 = await got.get("https://api.printify.com/v1/catalog/blueprints/" + req.headers.printify_id + "/print_providers/" + element["id"] + "/variants.json", { headers: { "Authorization": "Bearer " + printifyApiToken, "show-out-of-stock": "0"} })
                 let parsedResult2 = await JSON.parse(httpResponse2.body);
                 for(const element2 of parsedResult2["variants"]) {
-                    // response is gonna be [id, color, size, canPrintOnTheFront, canPrintOnTheBack, frontHeight, frontWidth, backHeight, backWidth]
+                    // response is gonna be [id, color, size, canPrintOnTheFront, canPrintOnTheBack, frontHeight, frontWidth, backHeight, backWidth, printProviderId]
                     // the canPrintOnTheFront//TheBack are gonna be booleans
                     let frontPlaceholder;
                     let backPlaceholder;
@@ -472,23 +524,24 @@ module.exports = {
                     }
                     if (doesFront) {
                         if (doesBack) {
-                            await resultingResponse.push([element2["id"], element2["options"]["color"], element2["options"]["size"], true, true, frontPlaceholder["height"], frontPlaceholder["width"], backPlaceholder["height"], backPlaceholder["width"]])
+                            await resultingResponse.push([element2["id"], element2["options"]["color"], element2["options"]["size"], true, true, frontPlaceholder["height"], frontPlaceholder["width"], backPlaceholder["height"], backPlaceholder["width"], element["id"]])
                         } else {
-                            await resultingResponse.push([element2["id"], element2["options"]["color"], element2["options"]["size"], true, false, frontPlaceholder["height"], frontPlaceholder["width"]])
+                            await resultingResponse.push([element2["id"], element2["options"]["color"], element2["options"]["size"], true, false, frontPlaceholder["height"], frontPlaceholder["width"], element["id"]])
                         }
                     } else {
                         if (doesBack) {
-                            await resultingResponse.push([element2["id"], element2["options"]["color"], element2["options"]["size"], false, true, backPlaceholder["height"], backPlaceholder["width"]])
+                            await resultingResponse.push([element2["id"], element2["options"]["color"], element2["options"]["size"], false, true, backPlaceholder["height"], backPlaceholder["width"], element["id"]])
                         } else {
-                            await resultingResponse.push([element2["id"], element2["options"]["color"], element2["options"]["size"], false, false])
+                            await resultingResponse.push([element2["id"], element2["options"]["color"], element2["options"]["size"], false, false, element["id"]])
                         }
                     }
                 };
-            };
-            response.status(200).send(resultingResponse);
-        } catch (err) {
-            console.log(err);
+                response.status(200).send(resultingResponse);
+            } catch (err) {
+                console.log(err);
+            }
         }
+
     },
     getUsersFiles: async function (req, res, token) {
         try {

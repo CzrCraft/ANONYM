@@ -17,13 +17,29 @@ late String _selectedColor;
 late List<dynamic> _variantsList;
 late int _maxFrontHeight;
 late int _maxFrontWidth;
-
+late int _blueprintID;
+late int _selectedPrintProvider;
 GlobalKey _editPageKey = GlobalKey();
 
 List<Widget> _frontShirtImages = List.empty(growable: true);
 List<GlobalKey<__shirtImageState>> _frontShirtImageKeys = List.empty(growable: true);
 List<Widget> _backShirtImages = List.empty(growable: true);
 List<GlobalKey<__shirtImageState>> _backShirtImageKeys = List.empty(growable: true);
+
+void clearAll(){
+  _selectedColor = "";
+  _selectedSize = "";
+  _variantsList.clear();
+  _maxFrontHeight = 0;
+  _maxFrontWidth = 0;
+  _blueprintID = 0;
+  _selectedPrintProvider = 0;
+  _editPageKey = GlobalKey();
+  _frontShirtImageKeys.clear();
+  _backShirtImageKeys.clear();
+  _frontShirtImages.clear();
+  _backShirtImages.clear();
+}
 
 _updateAnImage(String property, double value, GlobalKey<__shirtImageState> imgKey){
   switch(property){
@@ -434,9 +450,13 @@ class __EditPageState extends State<_EditPage> {
                             onPressed: ()async{
                               getWidgetSize();
                               Map<String, String> designHeaders = {};
-                              designHeaders["print_provider"] = "1";
-                              designHeaders["blueprint_id"] = "1";
-                              designHeaders["variant_id"] = "1";
+                              designHeaders["print_provider"] = _selectedPrintProvider.toString();
+                              designHeaders["blueprint_id"] = _blueprintID.toString();
+                              for(var variant in _variantsList){
+                                if(variant[1] == _selectedColor && variant[2] == _selectedSize){
+                                  designHeaders["variant_id"] = variant[0].toString();
+                                }
+                              }
                               Map<String, dynamic> designBody = {};
                               List<dynamic> printAreas = List.empty(growable: true);
                               final myController = TextEditingController(); 
@@ -493,8 +513,8 @@ class __EditPageState extends State<_EditPage> {
                                                                   printAreas.add({
                                                                     "src": element.currentState!.getID(), 
                                                                     "scale": element.currentState!.getScale(),
-                                                                    "x": orgWidth / element.currentState!.getX(),
-                                                                    "y": orgHeight / element.currentState!.getY(),
+                                                                    "x": element.currentState!.getX() / orgWidth,
+                                                                    "y": element.currentState!.getY() / orgHeight,
                                                                   });
                                                                 }
                                                                 designBody["print_areas"] = Map<String, dynamic>.from({"front": printAreas});
@@ -510,6 +530,7 @@ class __EditPageState extends State<_EditPage> {
                                                                         actions: [
                                                                           TextButton(
                                                                             onPressed: () {
+                                                                              clearAll();
                                                                               Navigator.pop(context, 'Hooray');
                                                                               Navigator.push(context, animatedRoute(HomePage(0)));
                                                                             },
@@ -564,9 +585,9 @@ class __EditPageState extends State<_EditPage> {
                                                     });
                                                   });
                                                 }
-                                                Navigator.pop(context, 'Ok');
+                                                Navigator.pop(context, 'Upload');
                                               },
-                                              child: Text('Ok', style: TextStyle(color: primaryColor)),
+                                              child: Text('Upload', style: TextStyle(color: primaryColor)),
                                             ),
                                           ],
                                         )
@@ -753,20 +774,23 @@ class __ChoseVariantPageState extends State<_ChoseVariantPage> {
   late String colorDropdownValue;
   List<String> sizeDropdownItems = List<String>.empty(growable: true);
   late String sizeDropdownValue;
+  int printProviderID = 0;
   int maxFrontHeight = 1000000000;
   int maxFrontWidth = 1000000000;
   @override
   int finishedLoading = 0;
   void initState() {
+    _blueprintID = widget.blueprintID;
     get_variants(api_token, widget.blueprintID.toString(), (String res) async {
       if (res != "") {
-        // response is gonna be [id, color, size, canPrintOnTheFront, canPrintOnTheBack, frontHeight, frontWidth, backHeight, backWidth]
+        // response is gonna be [id, color, size, canPrintOnTheFront, canPrintOnTheBack, frontHeight, frontWidth, backHeight, backWidth, printProviderId]
         List<dynamic> variantList = jsonDecode(res);
         _variantsList = variantList;
         int maxIterations = _variantsList.length;
         int _i = 0;
         for(dynamic value in variantList){
           if(_i < maxIterations){
+            printProviderID = value[9];
             if(value[5] < maxFrontHeight){
               maxFrontHeight = value[5];
             }
@@ -783,25 +807,6 @@ class __ChoseVariantPageState extends State<_ChoseVariantPage> {
             
           }
         }
-        // await Future.forEach(variantList, (value) async {
-        //   if(_i < maxIterations){
-        //     if(value[6] < maxFrontHeight){
-        //       maxFrontHeight = value[6];
-        //     }
-        //     if(value[7] < maxFrontWidth){
-        //       maxFrontHeight = value[7];
-        //     }
-        //     if (!colorDropdownItems.contains(value[1])) {
-        //       colorDropdownItems.add(value[1]);
-        //     }
-        //     if (!sizeDropdownItems.contains(value[2])) {
-        //       sizeDropdownItems.add(value[2]);
-        //     }
-        //   }else{
-            
-        //   }
-        //   _i++;
-        // });
         colorDropdownValue = colorDropdownItems.first;
         sizeDropdownValue = sizeDropdownItems.first;
         setState(() {
@@ -910,6 +915,7 @@ class __ChoseVariantPageState extends State<_ChoseVariantPage> {
                     onPressed: (){
                       _selectedColor = colorDropdownValue;
                       _selectedSize = sizeDropdownValue;
+                      _selectedPrintProvider = printProviderID;
                       _editPageKey = GlobalKey();
                       Navigator.push(context,animatedRoute(_EditPage(key: _editPageKey,)));
                     }, 
