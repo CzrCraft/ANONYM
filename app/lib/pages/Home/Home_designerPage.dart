@@ -8,6 +8,7 @@ import 'dart:convert';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:Stylr/pages.dart';
 // dirty solution to get the images to scale with the screen
 // not proud of it, but it'l work
 late BuildContext _listViewContext;
@@ -498,6 +499,7 @@ class __EditPageState extends State<_EditPage> {
                                                                   designBody["orgHeight"] = orgHeight;
                                                                   designBody["orgWidth"] = orgWidth;
                                                                   if(await sendDesignToApi(headers: designHeaders, designBody: designBody, securityToken: api_token)){
+                                                                    Navigator.pop(context, 'Ok');
                                                                     showDialog(context: context, 
                                                                       builder: (context) => AlertDialog(
                                                                         title: Text("Published your design!", style: TextStyle(color: primaryColor),),
@@ -513,6 +515,7 @@ class __EditPageState extends State<_EditPage> {
                                                                       )
                                                                     );
                                                                   }else{
+                                                                    Navigator.pop(context, 'Ok');
                                                                     showDialog(context: context, 
                                                                       builder: (context) => AlertDialog(
                                                                         title: Text("Something went wrong", style: TextStyle(color: primaryColor),),
@@ -521,6 +524,9 @@ class __EditPageState extends State<_EditPage> {
                                                                           TextButton(
                                                                             onPressed: () {
                                                                               Navigator.pop(context, 'Ok');
+                                                                              Navigator.pop(context);
+                                                                              Navigator.pop(context);
+                                                                              Navigator.push(context, animatedRoute(new HomePage(0)));
                                                                             },
                                                                             child: Text('Ok', style: TextStyle(color: primaryColor)),
                                                                           ),
@@ -528,7 +534,6 @@ class __EditPageState extends State<_EditPage> {
                                                                       )
                                                                     );
                                                                   }
-                                                                  Navigator.pop(context, 'Ok');
                                                                 }else{
                                                                   Navigator.pop(context, 'Ok');
                                                                   showDialog(context: context, 

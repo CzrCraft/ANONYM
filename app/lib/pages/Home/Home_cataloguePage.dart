@@ -151,6 +151,8 @@ class _CataloguePageState extends State<CataloguePage> {
     void setup(String apiData) async{
       if(!ran){
         List<dynamic> jsonApiData = jsonDecode(apiData);
+        // really shitty solution but idgaf
+        List<String> designIDs = List.empty(growable: true);
         for(var design in jsonApiData){
           // RLLY IMPORTANT DON'T CHANGE
           String designName = "";
@@ -162,6 +164,7 @@ class _CataloguePageState extends State<CataloguePage> {
           Map<String, dynamic> designFeatures = {};
           // loop through the values in the response
           // DONT CHANGE THIS 
+          bool doPush = true;
           for(var entry in design.entries){
             var key = entry.key;
             var value = entry.value;
@@ -186,6 +189,9 @@ class _CataloguePageState extends State<CataloguePage> {
                 break;
               case "design_id":
                 designID = value;
+                if((designIDs.contains(designID))){
+                  doPush = false;
+                }
                 break;
               case "liked_by":
                 // fucking pain in the ass to get working
@@ -200,8 +206,13 @@ class _CataloguePageState extends State<CataloguePage> {
                   }
             }
           }
-          // add the design to the ListView widget that's going to be shown on the screen
-          designList.add(_DesignWidget(properties: designFeatures, name: designName, author: designAuthor, like_count: likeCount, thumbnailId: thumbnailId, isLiked: isLiked,designID: designID,));
+          if(doPush){
+            // add the design to the ListView widget that's going to be shown on the screen
+            designList.add(_DesignWidget(properties: designFeatures, name: designName, author: designAuthor, like_count: likeCount, thumbnailId: thumbnailId, isLiked: isLiked,designID: designID,));
+          }else{
+            doPush = true;
+          }
+          
         }
         setState(() {
           // DONT CHANGE THIS 
