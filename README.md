@@ -5,6 +5,10 @@ School: Scoala Gimnaziala Nr. 49
 
 Teammates: Constantin Cezar Stefan
 
+Technology: Flutter, NodeJS
+
+Language: English
+
 All in one platform for making and sharing custom clothing.
 # API
 It's API is secured with locally signed SSL Certificates. The users are securely stored in a MongoDB Database with an ssl certificate ensuring encripted communications and password protection for both the MongoDB Cluster and Database.
