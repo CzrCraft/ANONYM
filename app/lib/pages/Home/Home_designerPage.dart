@@ -487,6 +487,9 @@ class __EditPageState extends State<_EditPage> {
                                                                 bool elementsPresent = false;
                                                                 for(GlobalKey<__shirtImageState> element in _frontShirtImageKeys){
                                                                   elementsPresent = true;
+                                                                  if(element.currentState!.isSelected()){
+                                                                    element.currentState!.deselect();
+                                                                  }
                                                                   printAreas.add({
                                                                     "src": element.currentState!.getID(), 
                                                                     "scale": element.currentState!.getScale(),

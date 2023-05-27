@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, sort_child_properties_last, unnecessary_new
+// ignore_for_file: file_names, sort_child_properties_last, unnecessary_new, must_be_immutable
 
 import 'package:flutter/material.dart';
 import 'package:Stylr/main.dart';
@@ -14,7 +14,6 @@ class StartPage extends StatefulWidget {
 }
 
 class _StartPageState extends State<StartPage> {
-  @override
   bool finished_animation = false;
   bool finished_second_animation = false;
   @override
@@ -82,7 +81,6 @@ class _StartPageState extends State<StartPage> {
                     color: primaryColor,
                     decoration: TextDecoration.none),
               ),
-              // ignore: sort_child_properties_last
               Padding(
                 child: Container(
                   child: TextButton(
@@ -128,7 +126,6 @@ class _StartPageState extends State<StartPage> {
                     color: primaryColor,
                     decoration: TextDecoration.none),
               ),
-              // ignore: sort_child_properties_last
               Padding(
                 child: Container(
                   child: TextButton(

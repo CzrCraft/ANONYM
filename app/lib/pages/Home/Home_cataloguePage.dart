@@ -163,8 +163,6 @@ class _CataloguePage extends State<CataloguePage> with TickerProviderStateMixin 
         // shit ass code
         if((designIDs.contains(design["design_id"]))){  
           continue;
-        }else{
-          designIDs.add(design["design_id"]);
         }
         String designName = design["designName"];
         String designAuthor = design["author"];
@@ -190,6 +188,12 @@ class _CataloguePage extends State<CataloguePage> with TickerProviderStateMixin 
         ran = true;
       });
     }
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _ticker.dispose();
+    super.dispose();
   }
   @override
   void initState() {
@@ -225,7 +229,6 @@ class _CataloguePage extends State<CataloguePage> with TickerProviderStateMixin 
             temp = snapshot.data.body.replaceAll(RegExp(r"\\"), "");
             firstTime = false;
           }
-          
           designList = designList.toSet().toList();
           return Center(child: ListView(
             children: [
@@ -255,17 +258,19 @@ class _CataloguePage extends State<CataloguePage> with TickerProviderStateMixin 
                   ),
                   cursorColor: primaryColor,
                   onChanged: (input){
-                    print(input);
-                    if(input.trim() == ""){
-                      // WHY DOESN'T IT FUCKING GET ALL THE DESIGNS WHEN SEARCH IS EMPTY
-                      // this takes years off my life
-                      searchQuery = "GET_ALL";
-                    }else{
-                      searchQuery = input;
+                    if(needsRebuilding == false && ran == true && temp == ""){
+                      print(input);
+                      if(input.trim() == ""){
+                        // WHY DOESN'T IT FUCKING GET ALL THE DESIGNS WHEN SEARCH IS EMPTY
+                        // this takes years off my life
+                        searchQuery = "GET_ALL";
+                      }else{
+                        searchQuery = input;
+                      }
+                      ran = false;
+                      temp = snapshot.data.body.replaceAll(RegExp(r"\\"), "");
+                      needsRebuilding = true;
                     }
-                    ran = false;
-                    temp = snapshot.data.body.replaceAll(RegExp(r"\\"), "");
-                    needsRebuilding = true;
                   },
                 ),
               ),
@@ -279,6 +284,7 @@ class _CataloguePage extends State<CataloguePage> with TickerProviderStateMixin 
     );
   }
 }
+
 // the _ char means that this widget is local
 // so that i don't fuck everything up
 class _ViewPage extends StatefulWidget {
@@ -296,21 +302,26 @@ class __ViewPageState extends State<_ViewPage> {
   String designName = "testNamen";
   String designAuthor = "testAuthor";
   var thumbnailID = "";
+  late int orgHeight;
+  late int orgWidth;
+  late List<dynamic> properties = List.empty(growable: true);
+
   bool ran = false;
   // ^ is rlly shitty solution to a stupid problem but really easy to implement
   // i've only got two days left to finnish this
-  late Map<String, dynamic> properties;
+  // late Map<String, dynamic> properties;
   @override
   Widget build(BuildContext context) {
     // just started making this and it's already a pain in the ass
     // fucking sizedbox ignores size
     // already broke a monitor cuz of shitty ass flutter
+
+    // yay i think it works now :)
     void setupLikeButton(var value) async {
       // recycling old code cuz why write new one 
       if(!ran){
       String username = await getUsername(api_token);
         if(value.contains("," + username)){
-          print("e");
           setState(() {
             widget.isLiked = true;
             ran = true;
@@ -331,10 +342,23 @@ class __ViewPageState extends State<_ViewPage> {
           var responseData = jsonDecode(snapshot.data.body);
           designName = responseData["designName"];
           designAuthor = responseData["author"];
-          properties = responseData["properties"]["print_areas"];
+          properties = responseData["properties"]["print_areas"]["front"];
+          orgHeight = responseData["properties"]["orgHeight"];
+          orgWidth = responseData["properties"]["orgWidth"];
           thumbnailID = responseData["thumbnail_id"];
+          double scaleRatio = orgWidth / getFromPercent("horizontal", 92, context);
           setupLikeButton(responseData["liked_by"]);
-          print(responseData);
+          List<Widget> childrenWidget = List.empty(growable: true);
+          childrenWidget.add(Image.asset("assets/graphics/shirt_front_no_bg.png", 
+                              fit: BoxFit.cover, 
+                              height: getFromPercent("vertical", 47, context)
+                            ));
+          for(dynamic img in properties){
+            print(img);
+            double newX = getFromPercent("horizontal", 90, context) / img["x"];
+            double newY = getFromPercent("vertical", 105, context) / img["y"];
+            childrenWidget.add(Positioned(child: Image.network(apiIP + "/api/files/" + img["src"], scale: img["scale"] / scaleRatio), bottom: newY, left: newX));
+          }
           return Container(
             color: primaryColor,
             child: Padding(
@@ -379,10 +403,16 @@ class __ViewPageState extends State<_ViewPage> {
                     child: Container(
                       width: getFromPercent("horizontal", 90, context),
                       decoration: BoxDecoration(
-                        color: primaryColor,
-                        borderRadius: BorderRadius.circular(7)
+                        color: secondaryColor,
+                        borderRadius: BorderRadius.circular(7),
                       ),
-                      child: ClipRRect(child: Image.network(apiIP + "/api/files/" + thumbnailID, height: getFromPercent("vertical", 65, context), fit: BoxFit.cover), borderRadius: BorderRadius.circular(12.0), ),
+                      height: getFromPercent("vertical", 65, context),
+                      //Image.asset('assets/graphics/shirt_front_no_bg.png')
+                      child: Center(
+                        child: Stack(
+                          children: childrenWidget
+                        ) 
+                      ),
                     ), 
                   ),
                   Padding(
