@@ -9,6 +9,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:Stylr/pages.dart';
+import 'package:flutter/scheduler.dart';
 // dirty solution to get the images to scale with the screen
 // not proud of it, but it'l work
 late BuildContext _listViewContext;
@@ -238,11 +239,16 @@ class _EditPage extends StatefulWidget {
   State<_EditPage> createState() => __EditPageState();
 }
 
-class __EditPageState extends State<_EditPage> {
+class __EditPageState extends State<_EditPage> with TickerProviderStateMixin {
   @override
-
+  late Ticker _ticker;
+  late BuildContext context_;
   @override
   void initState() {
+    _ticker = super.createTicker((Duration elapsedTime) {
+      context_ = context;
+    });
+    _ticker.start();
     _frontShirtImages.clear();
     _frontShirtImageKeys.clear();
     _backShirtImages.clear();
@@ -346,6 +352,112 @@ class __EditPageState extends State<_EditPage> {
   int shirtSide = 0;
   late Widget shirtImage;
   late Size widgetSize;
+  Map<String, String> designHeaders = {};
+  Map<String, dynamic> designBody = {};
+  List<dynamic> printAreas = List.empty(growable: true);
+  void fixBug(BuildContext context) async {
+    context = context_;
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.image
+    );
+    if (result != null) {
+      context = context_;
+      sendFileToApi(result.files.first.path!, api_token, returnToken: true, (String fileID){
+        context = context_;
+        designHeaders["thumbnail"] = fileID;
+          showDialog(context: context, 
+          builder: (context) => 
+            AlertDialog(
+              title: Text("Uploaded your image!", style: TextStyle(color: primaryColor),),
+              backgroundColor: secondaryColor,
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    double orgWidth = widgetSize.width;
+                    double orgHeight = widgetSize.height;
+                    bool elementsPresent = false;
+                    for(GlobalKey<__shirtImageState> element in _frontShirtImageKeys){
+                      elementsPresent = true;
+                      if(element.currentState!.isSelected()){
+                        element.currentState!.deselect();
+                      }
+                      printAreas.add({
+                        "src": element.currentState!.getID(), 
+                        "scale": element.currentState!.getScale(),
+                        "x": element.currentState!.getX() / orgWidth,
+                        "y": element.currentState!.getY() / orgHeight,
+                      });
+                    }
+                    designBody["print_areas"] = Map<String, dynamic>.from({"front": printAreas});
+                    if(elementsPresent){
+                      designBody["orgHeight"] = orgHeight;
+                      designBody["orgWidth"] = orgWidth;
+                      if(await sendDesignToApi(headers: designHeaders, designBody: designBody, securityToken: api_token)){
+                        Navigator.pop(context, 'Ok');
+                        showDialog(context: context, 
+                          builder: (context) => AlertDialog(
+                            title: Text("Published your design!", style: TextStyle(color: primaryColor),),
+                            backgroundColor: secondaryColor,
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  clearAll();
+                                  Navigator.pop(context, 'Hooray');
+                                  Navigator.push(context, animatedRoute(HomePage(0)));
+                                },
+                                child: Text('Hooray', style: TextStyle(color: primaryColor)),
+                              ),
+                            ],
+                          )
+                        );
+                      }else{
+                        Navigator.pop(context, 'Ok');
+                        showDialog(context: context, 
+                          builder: (context) => AlertDialog(
+                            title: Text("Something went wrong", style: TextStyle(color: primaryColor),),
+                            backgroundColor: secondaryColor,
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context, 'Ok');
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                  Navigator.push(context, animatedRoute(new HomePage(0)));
+                                },
+                                child: Text('Ok', style: TextStyle(color: primaryColor)),
+                              ),
+                            ],
+                          )
+                        );
+                      }
+                    }else{
+                      Navigator.pop(context, 'Ok');
+                      showDialog(context: context, 
+                        builder: (context) => AlertDialog(
+                          title: Text("Please add something to the design before publishing!", style: TextStyle(color: primaryColor),),
+                          backgroundColor: secondaryColor,
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context, 'Ok');
+                              },
+                              child: Text('Ok', style: TextStyle(color: primaryColor)),
+                            ),
+                          ],
+                        )
+                      );
+                    }
+                  },
+                  child: Text('Ok', style: TextStyle(color: primaryColor)),
+                ),
+              ],
+            )
+          );
+      });
+    }else{
+    }
+  }
+  
   Widget build(BuildContext context) {
   void getWidgetSize(){
       final RenderBox renderBox = context.findRenderObject() as RenderBox;
@@ -449,7 +561,7 @@ class __EditPageState extends State<_EditPage> {
                             child: Text("Publish your design", style: TextStyle(color: secondaryColor, fontSize: getFromPercent("horizontal", 8, context))),
                             onPressed: ()async{
                               getWidgetSize();
-                              Map<String, String> designHeaders = {};
+                              
                               designHeaders["print_provider"] = _selectedPrintProvider.toString();
                               designHeaders["blueprint_id"] = _blueprintID.toString();
                               for(var variant in _variantsList){
@@ -457,8 +569,6 @@ class __EditPageState extends State<_EditPage> {
                                   designHeaders["variant_id"] = variant[0].toString();
                                 }
                               }
-                              Map<String, dynamic> designBody = {};
-                              List<dynamic> printAreas = List.empty(growable: true);
                               final myController = TextEditingController(); 
                               showDialog(
                                 context: context, 
@@ -486,106 +596,9 @@ class __EditPageState extends State<_EditPage> {
                                           backgroundColor: secondaryColor,
                                           actions: [
                                             TextButton(
-                                              onPressed: () async {
-                                                FilePickerResult? result = await FilePicker.platform.pickFiles(
-                                                  type: FileType.image
-                                                );
-                                                if (result != null) {
-                                                  sendFileToApi(result.files.first.path!, api_token, returnToken: true, (String fileID){
-                                                    designHeaders["thumbnail"] = fileID;
-                                                    setState(() {
-                                                      showDialog(context: context, 
-                                                      builder: (context) => 
-                                                        AlertDialog(
-                                                          title: Text("Uploaded your image!", style: TextStyle(color: primaryColor),),
-                                                          backgroundColor: secondaryColor,
-                                                          actions: [
-                                                            TextButton(
-                                                              onPressed: () async {
-                                                                double orgWidth = widgetSize.width;
-                                                                double orgHeight = widgetSize.height;
-                                                                bool elementsPresent = false;
-                                                                for(GlobalKey<__shirtImageState> element in _frontShirtImageKeys){
-                                                                  elementsPresent = true;
-                                                                  if(element.currentState!.isSelected()){
-                                                                    element.currentState!.deselect();
-                                                                  }
-                                                                  printAreas.add({
-                                                                    "src": element.currentState!.getID(), 
-                                                                    "scale": element.currentState!.getScale(),
-                                                                    "x": element.currentState!.getX() / orgWidth,
-                                                                    "y": element.currentState!.getY() / orgHeight,
-                                                                  });
-                                                                }
-                                                                designBody["print_areas"] = Map<String, dynamic>.from({"front": printAreas});
-                                                                if(elementsPresent){
-                                                                  designBody["orgHeight"] = orgHeight;
-                                                                  designBody["orgWidth"] = orgWidth;
-                                                                  if(await sendDesignToApi(headers: designHeaders, designBody: designBody, securityToken: api_token)){
-                                                                    Navigator.pop(context, 'Ok');
-                                                                    showDialog(context: context, 
-                                                                      builder: (context) => AlertDialog(
-                                                                        title: Text("Published your design!", style: TextStyle(color: primaryColor),),
-                                                                        backgroundColor: secondaryColor,
-                                                                        actions: [
-                                                                          TextButton(
-                                                                            onPressed: () {
-                                                                              clearAll();
-                                                                              Navigator.pop(context, 'Hooray');
-                                                                              Navigator.push(context, animatedRoute(HomePage(0)));
-                                                                            },
-                                                                            child: Text('Hooray', style: TextStyle(color: primaryColor)),
-                                                                          ),
-                                                                        ],
-                                                                      )
-                                                                    );
-                                                                  }else{
-                                                                    Navigator.pop(context, 'Ok');
-                                                                    showDialog(context: context, 
-                                                                      builder: (context) => AlertDialog(
-                                                                        title: Text("Something went wrong", style: TextStyle(color: primaryColor),),
-                                                                        backgroundColor: secondaryColor,
-                                                                        actions: [
-                                                                          TextButton(
-                                                                            onPressed: () {
-                                                                              Navigator.pop(context, 'Ok');
-                                                                              Navigator.pop(context);
-                                                                              Navigator.pop(context);
-                                                                              Navigator.push(context, animatedRoute(new HomePage(0)));
-                                                                            },
-                                                                            child: Text('Ok', style: TextStyle(color: primaryColor)),
-                                                                          ),
-                                                                        ],
-                                                                      )
-                                                                    );
-                                                                  }
-                                                                }else{
-                                                                  Navigator.pop(context, 'Ok');
-                                                                  showDialog(context: context, 
-                                                                    builder: (context) => AlertDialog(
-                                                                      title: Text("Please add something to the design before publishing!", style: TextStyle(color: primaryColor),),
-                                                                      backgroundColor: secondaryColor,
-                                                                      actions: [
-                                                                        TextButton(
-                                                                          onPressed: () {
-                                                                            Navigator.pop(context, 'Ok');
-                                                                          },
-                                                                          child: Text('Ok', style: TextStyle(color: primaryColor)),
-                                                                        ),
-                                                                      ],
-                                                                    )
-                                                                  );
-                                                                }
-                                                              },
-                                                              child: Text('Ok', style: TextStyle(color: primaryColor)),
-                                                            ),
-                                                          ],
-                                                        )
-                                                      );
-                                                    });
-                                                  });
-                                                }
+                                              onPressed: () {
                                                 Navigator.pop(context, 'Upload');
+                                                fixBug(context);
                                               },
                                               child: Text('Upload', style: TextStyle(color: primaryColor)),
                                             ),
