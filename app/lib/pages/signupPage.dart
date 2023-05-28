@@ -112,6 +112,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
           ),
         );
       case 2:
+        TextEditingController textFieldController = TextEditingController();
         return Container(
           color: primaryColor,
           child: Column(
@@ -126,16 +127,38 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                     children: [
                       Material(
                         child: TextField(
+                          controller: textFieldController,
                           decoration: InputDecoration(
                             filled: true,
                             border: InputBorder.none,
                             fillColor: primaryColor,
-                            hoverColor: secondaryColor,
-                            focusColor: secondaryColor,
+                            hoverColor: Colors.transparent,
+                            focusColor: Colors.transparent,
                             focusedBorder: InputBorder.none,
                             enabledBorder: InputBorder.none,
                             disabledBorder: InputBorder.none,
                             errorBorder: InputBorder.none,
+                            hintText: "Type here...",
+                            hintStyle: TextStyle(color: secondaryColor.withOpacity(0.5)),
+                            suffixIcon: GestureDetector(
+                              child: Icon(Icons.send, color: secondaryColor),
+                              onTap: (){
+                                // copy and pasting code :)
+                                // NOT FROM STACK OVERFLOW💀💀
+                                String input = textFieldController.text;
+                                input = input.trim();
+                                if (input != "") {
+                                  setState(() {
+                                    print(input);
+                                    username = input;
+                                    animationStage = 3;
+                                  });
+                                  setState(() {
+                                    animationStage = 3;
+                                  });
+                                }
+                              },
+                            )
                           ),
                           textAlignVertical: TextAlignVertical.bottom,
                           textAlign: TextAlign.center,
@@ -187,7 +210,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                           repeatForever: false,
                           pause: const Duration(milliseconds: 1100),
                         )),
-                        top: getFromPercent("vertical", 2.2, context),
+                        top: getFromPercent("vertical", 2.7, context),
                         left: getFromPercent("horizontal", 2.6, context),
                       )
                     ],
@@ -226,6 +249,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
           ),
         );
       case 4:
+        TextEditingController textFieldController = TextEditingController();
         return Container(
           color: primaryColor,
           child: Column(
@@ -239,6 +263,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                   child: Stack(children: [
                     Material(
                       child: TextField(
+                        controller: textFieldController,
                         decoration: InputDecoration(
                           filled: true,
                           border: InputBorder.none,
@@ -249,6 +274,26 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                           enabledBorder: InputBorder.none,
                           disabledBorder: InputBorder.none,
                           errorBorder: InputBorder.none,
+                          hintText: "Type here...",
+                          hintStyle: TextStyle(color: secondaryColor.withOpacity(0.5)),
+                          suffixIcon: GestureDetector(
+                            child: Icon(Icons.send, color: secondaryColor),
+                            onTap: (){
+                              // copy and pasting code :)
+                              // NOT FROM STACK OVERFLOW💀💀
+                              String input = textFieldController.text;
+                              input = input.trim();
+                              if (input != "") {
+                                setState(() {
+                                  password = input;
+                                  animationStage = 5;
+                                });
+                                setState(() {
+                                  animationStage = 5;
+                                });
+                              }
+                            },
+                          )
                         ),
                         textAlignVertical: TextAlignVertical.bottom,
                         textAlign: TextAlign.center,

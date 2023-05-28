@@ -143,6 +143,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           ),
         );
       case 2:
+        TextEditingController textFieldController = TextEditingController();
         return Container(
           color: primaryColor,
           child: Column(
@@ -156,48 +157,75 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   child: Stack(
                     children: [
                       Material(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            filled: true,
-                            border: InputBorder.none,
-                            fillColor: primaryColor,
-                            hoverColor: secondaryColor,
-                            focusColor: secondaryColor,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                          ),
-                          textAlignVertical: TextAlignVertical.bottom,
-                          textAlign: TextAlign.center,
-                          cursorColor: secondaryColor,
-                          maxLength: 20,
-                          onSubmitted: (String input) {
-                            input = input.trim();
-                            if (input != "") {
-                              setState(() {
-                                print(input);
-                                username = input;
-                                animationStage = 3;
-                              });
-                              setState(() {
-                                animationStage = 3;
-                              });
-                            }
-                          },
-                          buildCounter: (
-                            BuildContext context, {
-                            required int currentLength,
-                            int? maxLength,
-                            required bool isFocused,
-                          }) =>
-                              null,
-                          style: TextStyle(
-                              backgroundColor: primaryColor,
-                              color: secondaryColor,
-                              fontSize:
-                                  getFromPercent("horizontal", 6, context)),
-                          showCursor: false,
+                        // added container to try and fix AA bug, but it doesn't seem to work
+                        // fucking phantom lines
+                        child: Container(
+                          color: primaryColor,
+                          child:TextField(
+                            controller: textFieldController,
+                            decoration: InputDecoration(
+                              filled: true,
+                              border: InputBorder.none,
+                              fillColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              focusColor: Colors.transparent,
+                              focusedBorder: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              errorBorder: InputBorder.none,
+                              hintText: "Type here...",
+                              hintStyle: TextStyle(color: secondaryColor.withOpacity(0.5)),
+                              suffixIcon: GestureDetector(
+                                child: Icon(Icons.send, color: secondaryColor),
+                                onTap: (){
+                                  // copy and pasting code :)
+                                  // NOT FROM STACK OVERFLOW💀💀
+                                  String input = textFieldController.text;
+                                  input = input.trim();
+                                  if (input != "") {
+                                    setState(() {
+                                      print(input);
+                                      username = input;
+                                      animationStage = 3;
+                                    });
+                                    setState(() {
+                                      animationStage = 3;
+                                    });
+                                  }
+                                },
+                              )
+                            ),
+                            textAlignVertical: TextAlignVertical.bottom,
+                            textAlign: TextAlign.center,
+                            cursorColor: secondaryColor,
+                            maxLength: 20,
+                            onSubmitted: (String input) {
+                              input = input.trim();
+                              if (input != "") {
+                                setState(() {
+                                  print(input);
+                                  username = input;
+                                  animationStage = 3;
+                                });
+                                setState(() {
+                                  animationStage = 3;
+                                });
+                              }
+                            },
+                            buildCounter: (
+                              BuildContext context, {
+                              required int currentLength,
+                              int? maxLength,
+                              required bool isFocused,
+                            }) =>
+                                null,
+                            style: TextStyle(
+                                backgroundColor: primaryColor,
+                                color: secondaryColor,
+                                fontSize:
+                                    getFromPercent("horizontal", 6, context)),
+                            showCursor: false,
+                          )
                         ),
                         borderOnForeground: false,
                       ),
@@ -205,7 +233,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         child: IgnorePointer(
                             child: AnimatedTextKit(
                           animatedTexts: [
-                            TyperAnimatedText("........................",
+                            TyperAnimatedText(".......................",
                                 speed: const Duration(milliseconds: 45),
                                 textStyle: TextStyle(
                                     fontSize: getFromPercent(
@@ -218,7 +246,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           repeatForever: false,
                           pause: const Duration(milliseconds: 1100),
                         )),
-                        top: getFromPercent("vertical", 2.2, context),
+                        top: getFromPercent("vertical", 2.7, context),
                         left: getFromPercent("horizontal", 2.6, context),
                       )
                     ],
@@ -258,6 +286,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           ),
         );
       case 4:
+        TextEditingController textFieldController = TextEditingController();
         return Container(
           color: primaryColor,
           child: Column(
@@ -271,16 +300,37 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   child: Stack(children: [
                     Material(
                       child: TextField(
+                        controller: textFieldController,
                         decoration: InputDecoration(
                           filled: true,
                           border: InputBorder.none,
                           fillColor: primaryColor,
-                          hoverColor: secondaryColor,
-                          focusColor: secondaryColor,
+                          hoverColor: Colors.transparent,
+                          focusColor: Colors.transparent,
                           focusedBorder: InputBorder.none,
                           enabledBorder: InputBorder.none,
                           disabledBorder: InputBorder.none,
                           errorBorder: InputBorder.none,
+                          hintText: "Type here...",
+                          hintStyle: TextStyle(color: secondaryColor.withOpacity(0.5)),
+                          suffixIcon: GestureDetector(
+                            child: Icon(Icons.send, color: secondaryColor),
+                            onTap: (){
+                              // copy and pasting code :)
+                              // NOT FROM STACK OVERFLOW
+                              String input = textFieldController.text;
+                              input = input.trim();
+                              if (input != "") {
+                                setState(() {
+                                  password = input;
+                                  animationStage = 5;
+                                });
+                                setState(() {
+                                  animationStage = 5;
+                                });
+                              }
+                            },
+                          )
                         ),
                         textAlignVertical: TextAlignVertical.bottom,
                         textAlign: TextAlign.center,
@@ -330,7 +380,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           repeatForever: false,
                           pause: const Duration(milliseconds: 1100),
                         )),
-                        top: getFromPercent("vertical", 2.2, context),
+                        top: getFromPercent("vertical", 2.7, context),
                         left: getFromPercent("horizontal", 2.6, context))
                   ]),
                   padding: EdgeInsets.only(
