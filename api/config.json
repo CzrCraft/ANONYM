@@ -1,6 +1,6 @@
 {
     "printify":{
-        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzN2Q0YmQzMDM1ZmUxMWU5YTgwM2FiN2VlYjNjY2M5NyIsImp0aSI6IjY2NjY1NmUwYjdkZDVhZTJiODg0NjU1YmRmNDNiMzU5NTYxNTJjMWRhMWFjYmEyMjkxM2JlOTczNDVjMjI4MDZlNmI0YzlhMTZhNjkyZTJmIiwiaWF0IjoxNjgyNjExODk4LjczOTEwNiwibmJmIjoxNjgyNjExODk4LjczOTExLCJleHAiOjE3MTQyMzQyOTguNzMzMzU3LCJzdWIiOiIxMjc3MDA0NiIsInNjb3BlcyI6WyJzaG9wcy5tYW5hZ2UiLCJzaG9wcy5yZWFkIiwiY2F0YWxvZy5yZWFkIiwib3JkZXJzLnJlYWQiLCJvcmRlcnMud3JpdGUiLCJwcm9kdWN0cy5yZWFkIiwicHJvZHVjdHMud3JpdGUiLCJ3ZWJob29rcy5yZWFkIiwid2ViaG9va3Mud3JpdGUiLCJ1cGxvYWRzLnJlYWQiLCJ1cGxvYWRzLndyaXRlIiwicHJpbnRfcHJvdmlkZXJzLnJlYWQiXX0.AN-BKPqxwNwuzsdyl6ktxzH-8rivtorhV_vkfGkSBkY3o-lo17hyi_LHgSPVr325uBL5AAyfnhnSncvuWJc",
+        "token": "put token here",
         "store_id": "8438513"
     },
     "server_settings":{
@@ -10,10 +10,10 @@
         "upload_dir": "/uploads/", 
         "database_settings": {
             "ip": "stylr.go.ro",
-            "port": 27017,
-            "name": "Stylr",
-            "user": "api_user",
-            "password": "H1Gv15HQfkm9MSkVf1rLoHpYfYD58OwUzrREUx0gD8BLGBSQsT00WPC5eMAxzu9igo9P95bFMz8iQ253OjHm3ZhTdRsSaQF9EkV2TU8W4wrs6MI6XGGKsRaoOYvpMpqyvMYZ36iMe6maOJjK0cA8LIwRxrPrRtguNkfnPVyeLB7sKH6kmTT8XUU4ONGe74CCGJapmZQAN29v3YNo2mi8waSGrkEXv3vvjiRDEOYtPPn4OjJxfCQDk6FrCLY9HyZa",
+            "port": 0,
+            "name": "database name",
+            "user": "database user",
+            "password": "database pass",
             "verify_ssl_certificate": false
         }
     }
